@@ -239,3 +239,29 @@ reported **zero**, confirming these are real defects and not a threshold artefac
       masters' figures are the loudness/true-peak `loudnorm` measurements taken when they were
       re-rendered (`gapfix.json`, i.e. off the files now on disk). `tools/dropout_qc.py` confirms
       Habib / Maya / Schrödinger all **0** drop-outs.
+
+## 13 · 2026-10-17 — public microsite + CI
+
+The metadata repo now builds a public EPK microsite and ships through CI.
+
+- [x] **Site generator** `tools/build_site.py` — renders `_site/` from tracked files only: the
+      15-artist roster with covers, each artist's `Press/FINE_PRINT_*.md` (plus `index.md` /
+      `RELEASE_NOTES.md` where present), the docs and the QC evidence. Artists without a mirrored
+      cover fall back to a monogram and the genre is read from the fine print (`New artist — TBA`
+      for the three onboardings). `_site/` is gitignored — the site is a view, never a source.
+- [x] **Integrity gate** `tools/ci_check.py` — rejects committed media / oversized files, malformed
+      `SHA256SUMS`, a season that isn't 15 artists, artists with no `Style / genres:` line, drift
+      between the mirrored docs, Python / shell / JSON syntax errors, and (with `--site`) broken
+      intra-site links. Run locally: **all checks passed**, 34 pages, 0 broken links.
+- [x] **Site image** `deploy/Dockerfile` — multi-stage build (python + `markdown` → nginx) serving
+      the site; built and smoke-tested locally (HTTP 200, cover served).
+- [x] **Workflows** — `ci.yml` (integrity + site build/link check + markdownlint + shellcheck),
+      `pages.yml` (deploy to GitHub Pages), `release.yml` (site bundle + press-kit zip +
+      `SHA256SUMS` on tag `v*`), `package.yml` (GHCR image on tag `v*`). Linted clean with
+      `actionlint`; release packaging dry-run locally.
+- [x] **Local verification** — site builds (15 artists, 16 docs), all 8 doc mirrors byte-identical,
+      `ci_check.py` green, Docker image builds and serves, markdownlint / shellcheck clean.
+- [ ] **Enable Pages** — repo **Settings → Pages → Source: GitHub Actions** (`pages.yml` requests
+      `enablement: true`, so the first push to `main` should self-enable; confirm the deploy job).
+- [ ] **Cut the first tag** — push a `v…` tag to exercise `release.yml` and `package.yml` end-to-end.
+

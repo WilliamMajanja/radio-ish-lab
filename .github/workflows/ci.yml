@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integrity:
+    name: Repo integrity gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify structure, manifests, mirrors and syntax
+        run: python tools/ci_check.py
+
+  site:
+    name: Build & link-check site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install site dependencies
+        run: pip install -r tools/requirements.txt
+      - name: Build EPK microsite
+        run: python tools/build_site.py --out _site
+      - name: Link-check the built site
+        run: python tools/ci_check.py --site _site
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: _site
+
+  lint:
+    name: Lint markdown & shell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: markdownlint (tracked Markdown only)
+        run: git ls-files -z '*.md' | xargs -0 npx --yes markdownlint-cli2@0.14.0
+      - name: shellcheck (tracked shell scripts)
+        run: git ls-files -z '*.sh' | xargs -0 shellcheck --severity=error --exclude=SC1071

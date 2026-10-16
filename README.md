@@ -163,7 +163,7 @@ python3 tools/dropout_qc.py "Habib/epk/mix/habib_mix.mp3"
 | `qc/SeasonOne_Mix_qc.md` | 15 masters · **123/123 checks** (sample rate, bitrate, bit-identical pair, length, hardlink, loudness gate, true-peak gate, drop-out gate) |
 | `qc/SeasonOne_EPK_SHA256SUMS` | 62 entries — 60 deliverable hashes (12 artists × 5) + 2 toolchain provenance lines |
 | `qc/SeasonOne_Media_SHA256SUMS` | 689 files · 160 GiB |
-| `qc/SeasonOne_Release_Checklist.md` | 86 verified items · 2 open |
+| `qc/SeasonOne_Release_Checklist.md` | 91 verified items · 4 open |
 
 ---
 
@@ -189,6 +189,41 @@ original macOS paths.
 | `tools/mix_qc_report.py` | Rebuild the mix QC report; re-measures only files whose size+mtime changed (the rest carry their last live measurement forward) |
 | `tools/media_manifest.py` | SHA-256 the whole media tree (skips `.git`, `Archive/`, AppleDouble `._*`) |
 | `tools/audit_masters.py` / `loudness_qc.py` | Independent loudness / peak audits |
+| `tools/build_site.py` | Render the public EPK microsite from tracked files only |
+| `tools/ci_check.py` | Repo integrity gate: media guard, manifest shape, artist/floor checks, mirror drift, broken links |
+
+---
+
+## Publishing & CI
+
+The metadata in this repo also builds a public **EPK microsite** and ships as a release.
+
+- `tools/build_site.py` renders the microsite from tracked files alone — the artist roster and
+  covers, each artist's `Press/FINE_PRINT_*.md` (and `index.md` / `RELEASE_NOTES.md` where they
+  exist), the docs and the QC evidence — into `_site/`. No HTML is hand-authored; the site is a
+  view of the repository.
+  ```bash
+  pip install -r tools/requirements.txt
+  python3 tools/build_site.py --out _site
+  ```
+- `tools/ci_check.py` is the integrity gate the CI runs: it rejects committed media and oversized
+  files, malformed `SHA256SUMS`, a season that isn't 15 artists, artists without a genre line,
+  drift between the mirrored docs, and — with `--site` — any broken intra-site link.
+
+| Workflow | Trigger | Does |
+|----------|---------|------|
+| `.github/workflows/ci.yml` | push / PR | integrity gate · site build + link check · markdownlint · shellcheck |
+| `.github/workflows/pages.yml` | push to `main` | builds the site and deploys it to **GitHub Pages** |
+| `.github/workflows/release.yml` | tag `v*` | attaches the site bundle, a press-kit zip and `SHA256SUMS` to a GitHub Release |
+| `.github/workflows/package.yml` | tag `v*` | publishes the site image to **GHCR** |
+
+The site is `https://djbernie-cyber.github.io/radio-ish-lab/`. The GHCR image is a multi-stage
+build (`deploy/Dockerfile`) that builds the site and serves it with nginx:
+
+```bash
+docker build -f deploy/Dockerfile -t radio-ish-lab:season-one .
+docker run --rm -p 8080:80 radio-ish-lab:season-one
+```
 
 ---
 

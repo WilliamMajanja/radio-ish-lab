@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to create/attach the release to"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve tag
+        id: tag
+        run: echo "name=${{ github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Install site dependencies
+        run: pip install -r tools/requirements.txt
+
+      - name: Build EPK microsite
+        run: python tools/build_site.py --out _site
+
+      - name: Link-check the built site
+        run: python tools/ci_check.py --site _site
+
+      - name: Package site bundle
+        run: |
+          cd _site && zip -rq ../radio-ish-lab-season-one-site.zip . && cd ..
+
+      - name: Package press kit (tracked metadata only)
+        run: |
+          git ls-files -z ':!:*.zip' ':!:.github/**' \
+            | xargs -0 zip -q radio-ish-lab-season-one-presskit.zip
+
+      - name: Checksums
+        run: sha256sum radio-ish-lab-season-one-*.zip > SHA256SUMS
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.tag.outputs.name }}" \
+            --title "Radio-ish Lab — Season One ${{ steps.tag.outputs.name }}" \
+            --generate-notes \
+            radio-ish-lab-season-one-site.zip \
+            radio-ish-lab-season-one-presskit.zip \
+            SHA256SUMS

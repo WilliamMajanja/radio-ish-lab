@@ -1,0 +1,3 @@
+# Site build dependencies (tools/build_site.py). Installed in CI only; the
+# generator has no other third-party dependency.
+Markdown>=3.5,<4

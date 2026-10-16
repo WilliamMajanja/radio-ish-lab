@@ -1,0 +1,66 @@
+# Build context exclusions for the site image. Mirror .gitignore's media rules so
+# the ~160 GiB of masters never enter the build context or the image.
+
+.git
+.github
+_site
+.venv-site
+.venv-tg
+.radio-ish-tg
+
+# media
+**/*.wav
+**/*.aiff
+**/*.aif
+**/*.aifc
+**/*.flac
+**/*.mp3
+**/*.m4a
+**/*.aac
+**/*.ogg
+**/*.opus
+**/*.mov
+**/*.mp4
+**/*.m4v
+**/*.mkv
+**/*.avi
+**/*.webm
+**/*.prproj
+
+# heavy working dirs (superseded masters, temp renders, platform uploads)
+Archive/
+_qc_tmprender/
+Social_Media/posters/
+Social_Media/promo/*/*.png
+Social_Media/promo/*/*.jpg
+Social_Media/promo/*/*.jpeg
+**/Bandcamp/
+**/Mixcloud/
+**/SoundCloud/
+**/Instagram/
+**/Tracksource/
+
+# per-artist working trees (source of truth lives off-repo)
+SDKZ/
+Yogo/
+Bernie/
+Mundz/
+Maya/
+Dikier/
+DJ Unknown/
+Alexander Zwo/
+Habib/
+Parisa/
+El Djemba/
+Schrödinger’s Breakfast/
+DNZ/
+Kesh-Zion/
+Canthus/
+radio-ish 2 Project/
+
+.DS_Store
+**/._*
+**/*.tmp
+**/*.log
+**/*.session
+**/*.torrent

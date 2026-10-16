@@ -90,6 +90,10 @@ node_modules/
 /Archive/
 /_qc_tmprender/
 
+# generated EPK microsite (built by tools/build_site.py; deployed via Pages)
+/_site/
+/.venv-site/
+
 # telegram session + credentials — never commit
 .radio-ish-tg/
 .venv-tg/

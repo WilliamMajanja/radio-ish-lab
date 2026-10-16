@@ -1,0 +1,51 @@
+{
+  // markdownlint-cli2 config for the Radio-ish Lab repo.
+  //
+  // This catalogue is curated prose: tables, long descriptive lines and
+  // occasional inline HTML are intentional. The rules below are therefore
+  // disabled as formatting noise. What remains is what actually matters for
+  // correctness — heading structure, alt text and non-empty links.
+  "config": {
+    "MD001": true,
+    "MD042": true,
+    "MD045": true,
+
+    "MD004": false,
+    "MD005": false,
+    "MD007": false,
+    "MD009": false,
+    "MD010": false,
+    "MD012": false,
+    "MD013": false,
+    "MD018": false,
+    "MD022": false,
+    "MD024": false,
+    "MD025": false,
+    "MD026": false,
+    "MD028": false,
+    "MD029": false,
+    "MD030": false,
+    "MD031": false,
+    "MD032": false,
+    "MD033": false,
+    "MD034": false,
+    "MD036": false,
+    "MD040": false,
+    "MD041": false,
+    "MD046": false,
+    "MD047": false,
+    "MD048": false,
+    "MD049": false,
+    "MD050": false,
+    "MD051": false,
+    "MD053": false,
+    "MD058": false,
+    "MD060": false
+  },
+  "ignores": [
+    "node_modules/**",
+    "_site/**",
+    "**/._*",
+    "**/.DS_Store"
+  ]
+}
