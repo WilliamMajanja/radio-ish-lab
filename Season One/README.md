@@ -63,7 +63,7 @@ just nominally: one gain, one EQ, applied identically to every artist.
 
 Only the trim differs per artist, and only because each source arrived at a different level.
 Per-artist trim, measured loudness, true peak and limiter ceiling: `QC/SeasonOne_Mix_qc.md`
-(**120/120 checks passed**). Pre-standardisation masters are preserved, never deleted, under
+(**123/123 checks passed**). Pre-standardisation masters are preserved, never deleted, under
 `../Archive/2026-09-26_superseded/mixes/`; the two gain-explosion repairs (Habib,
 Schrödinger's Breakfast) are under `../Archive/2026-10-15_gain_fix/mixes/`.
 
@@ -110,7 +110,7 @@ mirrored into `Season One/Artists/<Artist>/EPK/`.
   pass above 0 dBTP (El Djemba +1.27, Bernie +0.83, Schrödinger +0.74, DJ Unknown +0.09)
   because the ceiling calculation hit its floor and heavily-limited material overshoots once
   MP3 inter-sample peaks are counted; all four were re-rendered from the archived originals
-  with the ceiling lowered by the overshoot measured. See `QC/SeasonOne_Mix_qc.md` (120/120).
+  with the ceiling lowered by the overshoot measured. See `QC/SeasonOne_Mix_qc.md` (123/123).
 - **Yogo + Mundz genre tags — DONE.** Assigned from the published masters (Yogo `House /
   Techno`, Mundz `Live / Deep-Tech`); fine print, press pages, EPK videos and the roster
   re-rendered to match.

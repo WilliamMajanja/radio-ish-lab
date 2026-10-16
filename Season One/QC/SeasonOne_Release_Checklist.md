@@ -44,8 +44,8 @@ Generated from real on-disk state. Every box below is either **done (verified)**
       heavily-limited material overshoots once MP3 inter-sample peaks count. All four re-rendered
       from the archived originals with the ceiling lowered by the overshoot measured.
 - [x] All pre-standardisation masters preserved, never deleted — `Archive/2026-09-26_superseded/mixes/`
-- [x] `qc/SeasonOne_Mix_qc.md` — per-artist trim, loudness, true peak, limiter ceiling — **120/120 checks**
-      (8 checks × 15 masters)
+- [x] `qc/SeasonOne_Mix_qc.md` — per-artist trim, loudness, true peak, limiter ceiling — **123/123 checks**
+      (8 checks × 15 masters + a drop-out gate on the three rebuilt)
 - [x] **Ear check on the three quiet sources** — done 2026-10-16. The masters measured clean on
       loudness and true peak; the fault was brief near-silent **drop-outs in the archived source**
       (50-350 ms down to -48...-68 dBFS with music 20-60 dB louder either side). Bridged with
@@ -98,7 +98,7 @@ Generated from real on-disk state. Every box below is either **done (verified)**
 
 ## 8 · Production publications
 - [x] `qc/SeasonOne_EPK_qc.md` — loop/video stats table + per-artist checks + named gaps — **150/150**
-- [x] `qc/SeasonOne_Mix_qc.md` — mix house standard + per-artist measured results — **120/120**
+- [x] `qc/SeasonOne_Mix_qc.md` — mix house standard + per-artist measured results — **123/123**
 - [x] `qc/SeasonOne_EPK_SHA256SUMS` — **62 entries**: 12 loops + 12 EPK videos + 12 covers +
       12 fine prints + 12 press index pages + both binaries — all 60 deliverable hashes verified OK
       (the 2 toolchain lines are absolute macOS provenance paths and do not resolve off that host)
@@ -161,7 +161,7 @@ dependent artifacts re-rendered. Every figure below was measured on the current 
       Schrödinger's Breakfast rebuilt, DNZ/Kesh-Zion/Canthus onboarded). Changed/added rows were
       re-measured live with `ffmpeg ebur128=peak=true` (agrees with `loudnorm` to ±0.1 LU /
       0.02 dB, but runs ~43× realtime vs ~10×, so a full `loudnorm` re-measure would take ~8 h).
-      **120/120 checks passed.**
+      **120/120 checks passed.** (Since regenerated to **123/123** with the drop-out gate — see §12.)
 - [x] Ear check on the quiet-source masters (unchanged from §3) — completed 2026-10-16, see §12.
 
 ## 11 · 2026-10-16 — documentation pass (update)
@@ -230,8 +230,12 @@ reported **zero**, confirming these are real defects and not a threshold artefac
       from clean windows and report 0 drop-outs, so they were left as-is.
 - [x] **`tools/mix_qc_report.py` extended** — a per-artist drop-out gate and a "Drop-out repair"
       section (3 further checks: Habib, Maya, Schrödinger's Breakfast), plus the level-jump column.
-- [ ] **`qc/SeasonOne_Mix_qc.md` regeneration — OPEN.** The tool reads the measurement caches
-      `standardise3.json` / `tpfix.json` / `tpfix2.json` from the original build host for its trims
-      and repair ceilings; without them it re-measures loudness but writes a blank trim column, so
-      the committed report is left standing at **120/120**. The drop-out-clean result is proven
-      separately by `tools/dropout_qc.py` — Habib / Maya / Schrödinger all **0**.
+- [x] **`qc/SeasonOne_Mix_qc.md` regenerated — done.** The tool's render-metadata caches
+      (`standardise3.json` / `tpfix.json` / `tpfix2.json`) were reconstructed from the committed
+      report + `gapfix.json`, and `tools/mix_qc_report.py` now keeps a per-file loudness cache
+      (`mixmeas_cache.json`, keyed by size+mtime) so only a changed file is re-measured — every
+      other row carries its last live measurement forward. Regenerated report:
+      **123/123 checks passed, 0 failed** (120 structural + 3 drop-out gates). The three rebuilt
+      masters' figures are the loudness/true-peak `loudnorm` measurements taken when they were
+      re-rendered (`gapfix.json`, i.e. off the files now on disk). `tools/dropout_qc.py` confirms
+      Habib / Maya / Schrödinger all **0** drop-outs.

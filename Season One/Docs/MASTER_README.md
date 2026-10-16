@@ -29,7 +29,7 @@
 > Target **-14 LUFS** with true peak **below 0 dBTP**, identical chain for every artist:
 > high-pass 28 Hz, -1.5 dB @220 Hz, +1.0 dB @3 kHz, +1.5 dB @9 kHz (Pioneer XDJ-RX3);
 > DJ Unknown gets a gentler Denon variant. Each artist keeps its own trim.
-> Per-artist measured results: `qc/SeasonOne_Mix_qc.md` — **120/120 checks passed**.
+> Per-artist measured results: `qc/SeasonOne_Mix_qc.md` — **123/123 checks passed**.
 > Pre-standardisation masters are preserved under `Archive/2026-09-26_superseded/mixes/`;
 > the two gain-explosion repairs (Habib, Schrödinger's Breakfast) are under
 > `Archive/2026-10-15_gain_fix/mixes/`.

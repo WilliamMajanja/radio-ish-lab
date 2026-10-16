@@ -6,7 +6,7 @@
 **Project:** Radio-ish Lab — *Season One* (2026 crop)
 **Prepared by:** Radio-ish Lab production & QC (AI operator, `opencode`) under the direction of the credited team
 **Date:** 2026-10-16
-**Status:** Season One standardisation complete — **150/150** EPK checks and **120/120** mix checks passed; the added drop-out gate is proven independently by `tools/dropout_qc.py` (0/0/0)
+**Status:** Season One standardisation complete — **150/150** EPK checks and **123/123** mix checks passed (120 structural + 3 drop-out gates); `tools/dropout_qc.py` confirms 0/0/0 drop-outs on the three rebuilt masters
 
 | Role | Credit |
 |------|--------|
@@ -308,16 +308,18 @@ clean windows) and were left untouched. The pre-repair masters are archived, nev
 | Evidence | Scope |
 |----------|-------|
 | `qc/SeasonOne_EPK_qc.md` | 15 artists · **150/150** checks (loop spec, video spec, cover, fine print) |
-| `qc/SeasonOne_Mix_qc.md` | 15 masters · **120/120** checks (sample rate, bitrate, bit-identical pair, length, hardlink, loudness gate, true-peak gate) |
+| `qc/SeasonOne_Mix_qc.md` | 15 masters · **123/123** checks (sample rate, bitrate, bit-identical pair, length, hardlink, loudness gate, true-peak gate, drop-out gate) |
 | `qc/SeasonOne_EPK_SHA256SUMS` | **62 entries** — 60 deliverable hashes (12 × 5) + 2 toolchain provenance lines |
 | `qc/SeasonOne_Media_SHA256SUMS` | **689 files / 160.0 GiB** |
 
 The mix QC tool was extended this pass with a per-artist **drop-out gate** (3 further checks:
-Habib, Maya, Schrödinger's Breakfast), which appears in the report on its next regeneration. The
-drop-out-clean result itself is proven independently here by `tools/dropout_qc.py` — **0 / 0 / 0**
-on the three rebuilt masters. Reproducing the full report on this host additionally needs the
-original build machine's measurement caches (`standardise3.json`, `tpfix.json`, `tpfix2.json`),
-which carry the per-artist trims and repair ceilings; see §8.
+Habib, Maya, Schrödinger's Breakfast), and the report was regenerated from it — `qc/SeasonOne_Mix_qc.md`
+now reads **123/123 checks passed, 0 failed**. The three rebuilt masters' figures are the
+loudness/true-peak `loudnorm` measurements taken when they were re-rendered; `tools/dropout_qc.py`
+independently confirms **0 / 0 / 0** drop-outs. Reproducing the report needs the per-artist trims and
+repair ceilings (`standardise3.json`, `tpfix.json`, `tpfix2.json`); those are reconstructed from the
+committed report + `gapfix.json`, and the tool now caches per-file loudness so only a changed master
+is re-measured; see §8.
 
 The loops are all 24-bit and mastered to −14.00 LUFS; **three defects were found and fixed** in
 that pass (three loops clipping past 0 dBTP, six outside the LUFS gate, and **Habib's loop had
@@ -411,12 +413,14 @@ raised.
 
 ## 8 · Limitations and threats to validity
 
-- **The full remeasure is expensive.** A complete `loudnorm` pass over the catalogue at
-  ~10× realtime (SDKZ alone is a 6.5 h, 391-min session) is a **~8 hour** job. The repo's own
+- **A cold full remeasure is expensive.** A complete `loudnorm` pass over the catalogue at
+  ~10× realtime (SDKZ alone is a 6.5 h, 391-min session) is a **~8 hour** job. The repo's
   convention, stated in `qc/SeasonOne_Mix_qc.md`, is therefore to **remeasure only changed
-  rows live** and carry forward unchanged ones; changed rows were measured with
+  rows live** and carry byte-unchanged ones forward; `tools/mix_qc_report.py` enforces this with a
+  per-file cache keyed by size+mtime, so a normal run re-measures only the handful of rebuilt
+  masters rather than the catalogue. First-pass changed rows were measured with
   `ffmpeg ebur128=peak=true`, which agrees with `loudnorm` to **±0.1 LU / 0.02 dB** but runs
-  ~43× realtime. Some published rows are therefore displayed at 2 dp, some at 1 dp.
+  ~43× realtime rather than ~10×.
 - **Drop-out detection is threshold-bound.** The −48 dBFS floor and −35 dBFS surround gate
   were chosen so that Parisa's shallow 2004-era dips (to ~−36 dBFS) are *not* flagged. A
   different threshold would produce a different count. Controls (Parisa, Yogo → 0) are the
@@ -431,13 +435,13 @@ raised.
 - **Two known unfixed defects:** `tools/regen_qc.py` records the host binaries
   `~/bin/{ffmpeg,ffprobe}` in the manifest (they never enter it) and contains unresolvable
   macOS provenance paths by design.
-- **`tools/mix_qc_report.py` needs the build host's measurement caches.** It reads
-  `standardise3.json` / `tpfix.json` / `tpfix2.json` for the per-artist trims and repair
-  ceilings; those live on the original macOS build host and are absent on the Linux
-  finalisation host. Run without them, the tool re-measures loudness correctly but emits a
-  **blank trim column and no repaired-masters table**, so the committed `qc/SeasonOne_Mix_qc.md`
-  is left as the authority rather than overwritten. The fix is to ship those caches with the
-  repo (or have the tool derive trims from the report it is rewriting).
+- **`tools/mix_qc_report.py` needs render metadata that cannot be measured off a master.**
+  It reads the per-artist trims and repair ceilings from `standardise3.json` / `tpfix.json` /
+  `tpfix2.json`; those lived only on the original build host, and run without them the tool
+  emits a **blank trim column and no repaired-masters table**. They were reconstructed from the
+  committed report + `gapfix.json`, but they remain build-host state rather than tracked repo
+  files — deriving the trims from the report (or committing the caches) would remove the
+  dependency.
 - **Open items:** platform uploads (Mixcloud / SoundCloud / Bandcamp / Instagram / TikTok) need
   accounts; the three onboards' EPK stacks are not yet mirrored; no artist-supplied artwork.
 
@@ -455,7 +459,7 @@ shasum -a 256 -c qc/SeasonOne_Media_SHA256SUMS
 # Rebuild the EPK QC report + checksums, refresh the media manifest, remeasure the mixes.
 python3 tools/regen_qc.py
 python3 tools/media_manifest.py
-python3 tools/mix_qc_report.py      # ~8 h: full loudnorm over the catalogue
+python3 tools/mix_qc_report.py      # cached: only changed masters are re-measured
 
 # Confirm no near-silent drop-out survives in a shipped master (exit 0 = clean).
 python3 tools/dropout_qc.py "Habib/epk/mix/habib_mix.mp3"
@@ -472,7 +476,7 @@ files — are version-controlled.
 *Season One* proves that fifteen heterogeneous live sources — six-hour sessions, single-take
 Ableton sets, a 2004 archival transfer, ambient and experimental records — can be made to
 sound like **one house**, and that the result can be **proved** rather than asserted:
-150/150 EPK checks, 120/120 mix checks, and two byte-level manifests covering 60 deliverables
+150/150 EPK checks, 123/123 mix checks, and two byte-level manifests covering 60 deliverables
 and 689 media files.
 
 It also shows that the *equipment* was never the problem. Across a catalogue of XDJ-RX3s, a
@@ -499,7 +503,7 @@ Management (B4).**
 | Drop-outs after repair (shipped masters) | 0 |
 | Level jumps removed (Habib, Schrödinger) | 2 and 11 |
 | EPK checks | 150/150 |
-| Mix checks | 120/120 |
+| Mix checks | 123/123 |
 | Media manifest | 689 files / 160.0 GiB |
 | Catalogue migrated | 184,118,306,608 B / 4,595 files, byte-exact |
 

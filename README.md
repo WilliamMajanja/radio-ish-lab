@@ -22,7 +22,7 @@ produced it. The audio and video masters themselves stay on local and backup sto
 | **Mix masters** | 15 × 3 files — `mix` / `mix_hq` (48 kHz 320k, bit-identical) + `mix_epk` (44.1 kHz 320k) |
 | **EPK stack per artist** | seamless loop · EPK video · cover · fine print · press one-pager |
 | **EPK QC** | `qc/SeasonOne_EPK_qc.md` — **150/150 checks passed** |
-| **Mix QC** | `qc/SeasonOne_Mix_qc.md` — **120/120 checks passed** |
+| **Mix QC** | `qc/SeasonOne_Mix_qc.md` — **123/123 checks passed** |
 | **Checksums** | 62-entry EPK manifest + **689-file / 160 GiB** media manifest |
 | **Social** | 90 short-form clips across 12 artists, plus per-artist caption packs |
 | **In git** | docs, press copy, QC evidence, checksums, pipeline — ~150 files |
@@ -149,8 +149,9 @@ python3 tools/regen_qc.py
 # Refresh the media manifest (detects silent edits to any tracked media).
 python3 tools/media_manifest.py
 
-# Re-measure every master live and rebuild the mix QC report.
-python3 tools/mix_qc_report.py      # ~8 h: it runs loudnorm over the full catalogue
+# Rebuild the mix QC report. Only files whose size+mtime changed are re-measured
+# (a cold full loudnorm pass over the catalogue is ~8 h; a normal run is minutes).
+python3 tools/mix_qc_report.py
 
 # Confirm no near-silent drop-out survives in a shipped master (exit 0 = clean).
 python3 tools/dropout_qc.py "Habib/epk/mix/habib_mix.mp3"
@@ -159,10 +160,10 @@ python3 tools/dropout_qc.py "Habib/epk/mix/habib_mix.mp3"
 | Evidence | Scope |
 |----------|-------|
 | `qc/SeasonOne_EPK_qc.md` | 15 artists · **150/150 checks** (loop spec, video spec, cover, fine print) |
-| `qc/SeasonOne_Mix_qc.md` | 15 masters · **120/120 checks** (sample rate, bitrate, bit-identical pair, length, hardlink, loudness gate, true-peak gate) |
+| `qc/SeasonOne_Mix_qc.md` | 15 masters · **123/123 checks** (sample rate, bitrate, bit-identical pair, length, hardlink, loudness gate, true-peak gate, drop-out gate) |
 | `qc/SeasonOne_EPK_SHA256SUMS` | 62 entries — 60 deliverable hashes (12 artists × 5) + 2 toolchain provenance lines |
 | `qc/SeasonOne_Media_SHA256SUMS` | 689 files · 160 GiB |
-| `qc/SeasonOne_Release_Checklist.md` | 63 verified items · 4 open |
+| `qc/SeasonOne_Release_Checklist.md` | 86 verified items · 2 open |
 
 ---
 
@@ -185,7 +186,7 @@ original macOS paths.
 | `tools/make_social_clips.sh` | Bulk-render the six-cut platform set from live footage + mastered mix |
 | `tools/sync_release_mix.py` | Sync `Season One/Artists/<Artist>/Mix/` to exactly the canonical trio as hardlinks |
 | `tools/regen_qc.py` | Rebuild the EPK QC report + SHA-256 manifest from disk |
-| `tools/mix_qc_report.py` | Re-measure every master and rebuild the mix QC report |
+| `tools/mix_qc_report.py` | Rebuild the mix QC report; re-measures only files whose size+mtime changed (the rest carry their last live measurement forward) |
 | `tools/media_manifest.py` | SHA-256 the whole media tree (skips `.git`, `Archive/`, AppleDouble `._*`) |
 | `tools/audit_masters.py` / `loudness_qc.py` | Independent loudness / peak audits |
 
@@ -221,12 +222,13 @@ These are the conventions that keep the tree trustworthy:
 
 ## Status & open items
 
-Objective checks are green (EPK **150/150**, mix **120/120**, manifests regenerated,
+Objective checks are green (EPK **150/150**, mix **123/123**, manifests regenerated,
 release tree verified). What still needs a human or an outside resource:
 
-- **Ear check.** Habib, Maya and Schrödinger's Breakfast have very quiet source material, so
-  normalising to −14 LUFS lifts their noise floor. Objective figures are published; someone
-  still needs to listen.
+- **Ear check.** The objective ear check on the three quiet sources was carried out **2026-10-16**:
+  516 near-silent drop-outs were bridged and `tools/dropout_qc.py` now reports **0** on all three
+  (see §12 of the checklist). What remains is subjective — normalising these quiet sources to
+  −14 LUFS lifts their noise floor, so someone should still listen for hiss before press.
 - **Platform uploads.** Clips and captions are ready; posting needs credentials and can't be
   done from the build machine.
 - **The three onboardings (DNZ, Kesh-Zion, Canthus).** Their masters are hardlinked into
