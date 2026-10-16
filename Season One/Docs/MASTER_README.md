@@ -4,7 +4,7 @@
 > deliverable can be found, verified, and shipped to press or socials in minutes.
 > Target quality bar: **Mixmag-grade production & delivery.**
 
-## Artist Roster (12)
+## Artist Roster (15)
 
 | # | Artist | Role / Style | Mix deliverables | Status |
 |---|--------|--------------|------------------|--------|
@@ -20,30 +20,40 @@
 | 10 | DJ Unknown | Ableton-recorded DJ set | `dj_unknown_mix(_hq/_epk).mp3` | LIVE |
 | 11 | Mundz | Live / Deep-Tech · live set | `mundz_mix(_hq/_epk).mp3` | LIVE |
 | 12 | Yogo | House / Techno | `yogo_mix(_hq/_epk).mp3` | LIVE |
+| 13 | DNZ | Season One · new artist (genre not yet published) | `dnz_mix(_hq/_epk).mp3` | ONBOARDED |
+| 14 | Kesh-Zion | Season One · new artist (genre not yet published) | `kesh_zion_mix(_hq/_epk).mp3` | ONBOARDED |
+| 15 | Canthus | Season One · new artist (genre not yet published) | `canthus_mix(_hq/_epk).mp3` | ONBOARDED |
 
-> **Mix house standard (2026-09-28):** all 12 full-length masters have been standardised to
+> **Mix house standard (updated 2026-10-16):** all 15 full-length masters have been standardised to
 > one gain and one EQ, so the catalogue is genuinely consistent rather than nominally so.
 > Target **-14 LUFS** with true peak **below 0 dBTP**, identical chain for every artist:
 > high-pass 28 Hz, -1.5 dB @220 Hz, +1.0 dB @3 kHz, +1.5 dB @9 kHz (Pioneer XDJ-RX3);
 > DJ Unknown gets a gentler Denon variant. Each artist keeps its own trim.
-> Per-artist measured results: `qc/SeasonOne_Mix_qc.md` — **96/96 checks passed**.
-> Pre-standardisation masters are preserved under `Archive/2026-09-26_superseded/mixes/`.
+> Per-artist measured results: `qc/SeasonOne_Mix_qc.md` — **120/120 checks passed**.
+> Pre-standardisation masters are preserved under `Archive/2026-09-26_superseded/mixes/`;
+> the two gain-explosion repairs (Habib, Schrödinger's Breakfast) are under
+> `Archive/2026-10-15_gain_fix/mixes/`.
 
-> **EPK media status (2026-09-26):** all 12 artists ship a verified EPK stack —
+> **EPK media status (updated 2026-10-16):** all 15 artists ship a verified EPK stack —
 > `epk/audio/<TAG>_B4_30s_loop.wav` (30.000000 s, 48 kHz, seamless),
 > `epk/promo/cover_1080x1920_bw.png` (1080×1920, black background + white graphics),
 > `epk/video/<TAG>_B4_EPK_30s.mp4` (h264 1080×1920 + aac 48 kHz stereo, 30.000 s, fine print burned in),
 > `epk/text/FINE_PRINT_<TAG>_B4.md`.
 > QC evidence: `qc/SeasonOne_EPK_qc.md` · `qc/SeasonOne_EPK_SHA256SUMS` · `qc/SeasonOne_Release_Checklist.md`.
+> DNZ / Kesh-Zion / Canthus are QC'd in the report but stay out of
+> `SeasonOne_EPK_SHA256SUMS`, use a `*_titlecard_1080x1920.png` cover, and their EPK
+> (Audio/Video/Cover) copies are not yet mirrored into `Season One/Artists/`.
 
 ## Master Folder Architecture
 
 ```
 Radio-ish/
 ├── MASTER_README.md          <- this file
+├── README.md                 <- project overview: roster, house standard, verification
 ├── EPK_Audio_Workflow.md     <- mastering/QA convention (single source of truth)
 ├── BRAND_GUIDELINES.md       <- brand voice, handles, watermarks, hashtags
 ├── epk_lab_promotion.md      <- label pitch / promotion one-pager
+├── LAB_SESSION_1_PINET-ALPHA_MIGRATION.md  <- engineering record: the 184 GB catalogue migration
 │
 ├── Season One/               <- THE RELEASE TREE (see Season One/README.md)
 │   ├── README.md             <- release standard, canonical filenames, open items
@@ -52,7 +62,7 @@ Radio-ish/
 │   │   ├── Mix/                     <- mix / mix_hq / mix_epk
 │   │   └── Press/                   <- FINE_PRINT_<TAG>_B4.md + index.md
 │   ├── QC/                  <- QC report, SHA256SUMS, release checklist
-│   └── Docs/                <- hardlinks of the four top-level docs
+│   └── Docs/                <- copies of the four top-level docs
 │
 ├── Social_Media/             <- platform-ready audio + video + captions
 │   ├── SOCIAL_PLAYBOOK.md    <- platform specs & posting system
@@ -61,7 +71,7 @@ Radio-ish/
 ├── Advertising/              <- ad copy one-pagers + campaign concepts
 ├── EPK_Project/              <- lab mix builds + segments
 │
-├── {Artist}/epk/             <- WORKING folders (source of truth, ~97 GB)
+├── {Artist}/epk/             <- WORKING folders (source of truth, ~70 GB)
 │   ├── index.md              <- human-readable EPK (send to press)
 │   ├── audio/                <- original recordings (source of truth) + B4_30s_loop.wav
 │   ├── processing/           <- intermediates (_raw.wav, _hq stems)
@@ -70,13 +80,15 @@ Radio-ish/
 │   ├── video/                <- original footage + <TAG>_B4_EPK_30s.mp4
 │   └── _archive/             <- superseded/test/duplicate files (never deleted)
 │
+├── wavs/  mixes/             <- consolidated originals / staged master copies
 ├── Archive/                  <- cross-season superseded files (never deleted)
 └── qc/                       <- generated QA reports + checksums
 ```
 
 > **Working vs release.** `{Artist}/epk/` is the source of truth and keeps the heavy
-> material. `Season One/` is the delivery view: every file in it is a **hardlink** to the
-> canonical working file, so it costs no extra disk and cannot drift.
+> material. `Season One/` is the delivery view: mix deliverables are **hardlinks** to the
+> canonical working files (same inode, no extra disk, cannot drift) and the EPK/Press
+> copies are verified byte-for-byte against them.
 
 ## Deliverable Matrix (what “done” means)
 
@@ -96,7 +108,8 @@ Tags: artist name · Radio-ish Lab · year · genre · LC/MASTER version note.
 - Mastered audio → `{Artist}/epk/mix/`
 - Social video → `Social_Media/promo/{Artist}/`
 - Platform uploads → `Social_Media/{Bandcamp|Mixcloud|SoundCloud|Instagram}/`
-- QC evidence → `qc/{Artist}.md` + `qc/SHA256SUMS`
+- QC evidence → `qc/SeasonOne_Mix_qc.md` · `qc/SeasonOne_EPK_qc.md` · `qc/SeasonOne_*_SHA256SUMS`
+- Release readiness → `qc/SeasonOne_Release_Checklist.md`
 
 ## QC / Delivery Rules
 
@@ -107,4 +120,4 @@ Tags: artist name · Radio-ish Lab · year · genre · LC/MASTER version note.
 5. Every deliverable tagged with ID3 artist/album/year/genre.
 
 ---
-*Generated 2026-09-14 · updated 2026-09-28 · 12 artists · 1 standard · Mixmag-grade QA.*
+*Generated 2026-09-14 · updated 2026-10-16 · 15 artists · 1 standard · Mixmag-grade QA.*

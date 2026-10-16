@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # Radio-ish Lab — Season One
-# Media blobs are NOT in git. 139 files exceed git's 100 MB hard limit and the
-# project is ~97 GB; GitHub's practical ceiling is ~2 GB per repo. This repo
+# Media blobs are NOT in git. 234 files exceed git's 100 MB hard limit and the
+# project is ~160 GiB; GitHub's practical ceiling is ~2 GB per repo. This repo
 # tracks the release METADATA: structure, press copy, QC evidence, checksums
 # and the reproducible build pipeline. Masters stay on local/backup storage.
 # ─────────────────────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ node_modules/
 /Social_Media/promo/*/*.mp4
 /Social_Media/promo/*/*.mov
 
-# per-artist working folders — the ~97 GB of source of truth.
+# per-artist working folders — the ~70 GB of source of truth (plus wavs/ and Archive/).
 # Their press copy + QC is mirrored under Season One/Artists/<Artist>/.
 /SDKZ/
 /Yogo/

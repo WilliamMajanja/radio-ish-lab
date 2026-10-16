@@ -2,6 +2,11 @@
 
 Generated from real on-disk state. Every box below is either **done (verified)** or **open (named gap)**.
 
+> **Currency (2026-10-16):** figures below now track the current catalogue — **15 artists**
+> (12 original Season One acts + DNZ, Kesh-Zion, Canthus onboarded 2026-10-05). Where an item
+> records something that legitimately covers only the original 12 (house-standard cover art,
+> press one-pagers, the 62-entry EPK manifest), it says so.
+
 ## 1 · Toolchain
 - [x] `ffmpeg` installed — `~/bin/ffmpeg`, static **arm64**, `ffmpeg version 4.4` — verified with `-version`
 - [x] `ffprobe` installed — `~/bin/ffprobe`, static **arm64**, `ffprobe version n4.4.1` — verified with `-version`
@@ -10,26 +15,28 @@ Generated from real on-disk state. Every box below is either **done (verified)**
 - [x] Checksums recorded — SHA-256 of both binaries in `qc/SeasonOne_EPK_SHA256SUMS`
 - [x] `ffmpeg` has the filters the EPK needs: `drawtext` (fine-print burn-in), `overlay`, `scale`
 - [x] **Finalisation host note.** The original build machine was macOS (static `~/bin` binaries, whose
-      SHA-256s are preserved in `qc/SeasonOne_EPK_SHA256SUMS`). The Yogo / Mundz / Schrödinger's
-      Breakfast EPK videos were re-rendered here on the Linux host with system `ffmpeg` 7.1.5
-      (`tools/render_epks_alpha.sh`), meeting the same h264/aac spec. `tools/regen_qc.py` runs on
-      either host.
+      SHA-256s are preserved in `qc/SeasonOne_EPK_SHA256SUMS` as provenance lines). The Yogo / Mundz /
+      Schrödinger's Breakfast EPK videos were re-rendered here on the Linux host with system `ffmpeg`
+      7.1.5 (`tools/render_epks_alpha.sh`), meeting the same h264/aac spec. `tools/regen_qc.py` runs
+      on either host.
 
 ## 2 · Audio — seamless 30 s EPK loop per artist
-- [x] 12/12 loops built from **real** audio on disk (multitrack master, or mastered EPK mix where no master exists)
-- [x] 12/12 exact **30.000000 s** (verified with `afinfo` + `ffprobe`)
-- [x] 12/12 **48 kHz / 24-bit stereo**
-- [x] 12/12 **seamless** — 0.5 s equal-power crossfade, file ends on the sample it begins with; measured seam is at or below each track's own natural sample step
-- [x] **Loudness QC — DONE.** All 12 loops at **-14 LUFS / -1.0 dBTP**; every EPK video inside the
-      `-12…-16 LUFS` gate with true peak below 0 dBTP. `qc/SeasonOne_EPK_qc.md` — 120/120 checks.
+- [x] 15/15 loops built from **real** audio on disk (multitrack master, or mastered EPK mix where no master exists)
+- [x] 15/15 exact **30.000000 s** (verified with `afinfo` + `ffprobe`)
+- [x] 15/15 **48 kHz / 24-bit stereo**
+- [x] 15/15 **seamless** — 0.5 s equal-power crossfade, file ends on the sample it begins with; measured seam is at or below each track's own natural sample step
+- [x] **Loudness QC — DONE.** All 15 loops at **-14 LUFS / -1.0 dBTP**; every EPK video inside the
+      `-12…-16 LUFS` gate with true peak below 0 dBTP. `qc/SeasonOne_EPK_qc.md` — **150/150 checks**.
       Three defects found and fixed by this pass: three loops clipped past 0 dBTP, six sat outside
       the LUFS gate, and **Habib's loop had been cut from a silent 30 s window** near the head of
       its mix (effectively silent at -72 dBFS). All loops now 24-bit, matching the published spec.
+- [x] 12/12 loops mirrored into `Season One/Artists/<Artist>/EPK/Audio/` (the three onboardings'
+      EPK stacks are not yet mirrored — see §11)
 
 ## 3 · Full-length mixes — house standardisation
-- [x] All 12 masters standardised to **one gain and one EQ** — `-14 LUFS`, true peak below 0 dBTP
+- [x] All 15 masters standardised to **one gain and one EQ** — `-14 LUFS`, true peak below 0 dBTP
 - [x] Identical chain for every artist, so the catalogue is genuinely consistent, not just nominally
-- [x] Pioneer XDJ-RX3 EQ for 11 artists; gentler Denon variant for DJ Unknown
+- [x] Pioneer XDJ-RX3 EQ for 14 artists; gentler Denon variant for DJ Unknown
 - [x] `<artist>_mix.mp3` + `_mix_hq.mp3` — 48 kHz/320 kbps, **bit-identical**, encoded once
 - [x] `<artist>_mix_epk.mp3` — 44.1 kHz/320 kbps, rendered from the same intermediate as the masters
 - [x] **True-peak repair.** First pass left 4 masters above 0 dBTP (El Djemba +1.27, Bernie +0.83,
@@ -37,12 +44,15 @@ Generated from real on-disk state. Every box below is either **done (verified)**
       heavily-limited material overshoots once MP3 inter-sample peaks count. All four re-rendered
       from the archived originals with the ceiling lowered by the overshoot measured.
 - [x] All pre-standardisation masters preserved, never deleted — `Archive/2026-09-26_superseded/mixes/`
-- [x] `qc/SeasonOne_Mix_qc.md` — per-artist trim, loudness, true peak, limiter ceiling — **96/96 checks**
+- [x] `qc/SeasonOne_Mix_qc.md` — per-artist trim, loudness, true peak, limiter ceiling — **120/120 checks**
+      (8 checks × 15 masters)
 - [ ] **Ear check on the three quiet sources** — Habib, Maya and Schrödinger's Breakfast have very
       quiet masters, so normalising to -14 LUFS lifts their noise floor
 
 ## 4 · Images — cover standard
-- [x] 12/12 artists: `cover_1080x1920_bw.png`, 1080×1920, **black background + white graphics**
+- [x] 12/12 Season One artists: `cover_1080x1920_bw.png`, 1080×1920, **black background + white graphics**
+- [x] DNZ / Kesh-Zion / Canthus ship a house-styled `*_titlecard_1080x1920.png` instead — all 15
+      pass the cover check in `qc/SeasonOne_EPK_qc.md`
 - [x] **Yogo-specific cover** — now a Yogo 1080×1920 house-standard cover (mirrored waveform drawn
       from Yogo's own 30 s loop). No longer a copy of the SDKZ cover; the SDKZ duplicate is archived
       at `Yogo/epk/_archive/pre_cover/`.
@@ -51,40 +61,47 @@ Generated from real on-disk state. Every box below is either **done (verified)**
       `epk/promo/` as a reference.
 
 ## 5 · Video — EPK mp4 per artist
-- [x] 12/12 rendered — `h264` 1080×1920 `yuv420p` + `aac` 48 kHz stereo, 30.000 s
+- [x] 15/15 rendered — `h264` 1080×1920 `yuv420p` + `aac` 48 kHz stereo, 30.000 s (12 mirrored into `Season One/`)
 - [x] `+faststart` for streaming
 - [x] **Fine print burned in** (artist, style/genres, `RADIO-ISH LAB · SEASON ONE`, `30s seamless loop · 1080x1920`)
 - [x] Every stream/duration claim verified with `ffprobe`, not assumed
 - [x] Post-AAC true-peak repair applied where the encode overshot (Bernie, Schrödinger)
 
 ## 6 · Text — press publications
-- [x] 12/12 `epk/text/FINE_PRINT_<TAG>_B4.md` on disk (500–800 B each)
+- [x] 15/15 `epk/text/FINE_PRINT_<TAG>_B4.md` on disk (500–800 B each); 15 mirrored into `Season One/Artists/<Artist>/Press/`
 - [x] Genres sourced from `MASTER_README.md`, not invented
 - [x] **Bernie tightened** — `Vinyl Classics / Deep House`, leading with Vinyl Classics so it no longer collides with SDKZ's Deep House
-- [x] **12/12 press one-pagers** — `epk/index.md` hardlinked into `Season One/Artists/<Artist>/Press/`.
-      Mundz, Yogo and Schrödinger were missing these; created in this pass.
+- [x] **12/12 press one-pagers** — `epk/index.md` **copied** into `Season One/Artists/<Artist>/Press/`.
+      Mundz, Yogo and Schrödinger were missing these; created in this pass. The three onboardings
+      have no `index.md` yet.
 - [x] **Yogo + Mundz genres** — assigned from the published masters, not invented: Yogo
       `House / Techno`, Mundz `Live / Deep-Tech`. Fine print, press pages, EPK videos and the
       `MASTER_README.md` roster re-rendered to match.
 
 ## 7 · Release tree integrity
-- [x] **96/96** files in `Season One/` verified as hardlinks to their working originals
-- [x] 36/36 mix hardlinks intact (`mix`, `mix_hq`, `mix_epk` × 12)
-- [x] 4/4 top-level Docs hardlinks intact
+- [x] **45/45** mix files in `Season One/Artists/` verified as **hardlinks** to their working originals
+      (same inode — cannot drift); the EPK/Press files are byte-verified **copies**
+- [x] 45/45 mix hardlinks intact (`mix`, `mix_hq`, `mix_epk` × 15)
+- [x] 65/65 EPK + press copies byte-identical to their working originals (37 EPK files +
+      28 Press files; `DJ Unknown` release notes carries a dated addendum applied to both sides so
+      the pair still matches)
+- [x] 4/4 top-level Docs are identical **copies** of the top-level docs
 - [x] **Two breaks found and fixed.** The relink step only refreshed filenames already present, so
       it never added missing ones: Mundz had no `_mix.mp3` in the release tree, and Schrödinger's
       Breakfast had none of the three masters. `tools/sync_release_mix.py` now syncs rather than
       refreshes, and archives (never deletes) non-matrix files it finds.
 - [x] No tracked file exceeds GitHub's 100 MB limit — push is safe
-- [x] All 22 top-level folders accounted for; no empty or orphaned directories
+- [x] All 27 top-level folders accounted for; no empty or orphaned directories
 
 ## 8 · Production publications
-- [x] `qc/SeasonOne_EPK_qc.md` — loop/video stats table + 13 checks + named gaps
-- [x] `qc/SeasonOne_Mix_qc.md` — mix house standard + per-artist measured results
+- [x] `qc/SeasonOne_EPK_qc.md` — loop/video stats table + per-artist checks + named gaps — **150/150**
+- [x] `qc/SeasonOne_Mix_qc.md` — mix house standard + per-artist measured results — **120/120**
 - [x] `qc/SeasonOne_EPK_SHA256SUMS` — **62 entries**: 12 loops + 12 EPK videos + 12 covers +
-      12 fine prints + 12 press index pages + both binaries — all 62 verified OK
+      12 fine prints + 12 press index pages + both binaries — all 60 deliverable hashes verified OK
+      (the 2 toolchain lines are absolute macOS provenance paths and do not resolve off that host)
+- [x] `qc/SeasonOne_Media_SHA256SUMS` — **689 files / 160.0 GiB**, AppleDouble sidecars excluded
 - [x] This release checklist
-- [x] **`MASTER_README.md` roster** — all 12 artists listed, header corrected from 9
+- [x] **`MASTER_README.md` roster** — all 15 artists listed, header corrected from 9
 
 ## 9 · Press release gate
 - [x] Loop loudness QC (§2)
@@ -126,7 +143,7 @@ dependent artifacts re-rendered. Every figure below was measured on the current 
 - [x] **Social-clip audio bug fixed.** Every non-Parisa clip had been muxed with the *camera-mic*
       audio instead of the mastered mix (missing stream mapping). Added `-map 0:v:0 -map 1:a:0`
       in `tools/make_social_clips.sh`; **all 60 clips re-rendered** at ~-14 LUFS.
-- [x] **Season One tree re-synced** — 36/36 mix hardlinks restored (incl. Habib/Schrödinger via
+- [x] **Season One tree re-synced** — 45/45 mix hardlinks restored (incl. Habib/Schrödinger via
       `tools/sync_release_mix.py`); the 48 EPK tree copies refreshed to match the working files.
 - [x] **Manifests regenerated** — `qc/SeasonOne_EPK_SHA256SUMS` (62 entries, **150/150** checks via
       `tools/regen_qc.py`); `qc/SeasonOne_Media_SHA256SUMS` (**689 files, 160.0 GiB**, AppleDouble
@@ -143,3 +160,31 @@ dependent artifacts re-rendered. Every figure below was measured on the current 
       0.02 dB, but runs ~43× realtime vs ~10×, so a full `loudnorm` re-measure would take ~8 h).
       **120/120 checks passed.**
 - [ ] Ear check on the quiet-source masters (unchanged from §3).
+
+## 11 · 2026-10-16 — documentation pass (update)
+
+Repo documentation audited against on-disk state; nothing media-side was touched.
+
+- [x] **`README.md` created** — project overview: roster, house standard, repository layout,
+      verification commands, pipeline, working rules, status. Every figure in it checked against
+      the tree and the QC reports.
+- [x] **Five missed documents added to git** (they existed only inside gitignored working folders):
+      - `Season One/Artists/DNZ/Press/FINE_PRINT_DNZ_B4.md`
+      - `Season One/Artists/Kesh-Zion/Press/FINE_PRINT_KESH_ZION_B4.md`
+      - `Season One/Artists/Canthus/Press/FINE_PRINT_CANTHUS_B4.md`
+      - `Season One/Artists/DJ Unknown/Press/RELEASE_NOTES.md`
+        (dated addendum: loudness/chain figures pre-date standardisation — current **-13.65 LUFS /
+        -1.60 dBTP** per `qc/SeasonOne_Mix_qc.md`; same addendum written to the working original so
+        the mirror stays byte-identical)
+      - `LAB_SESSION_1_PINET-ALPHA_MIGRATION.md` (top level — the 184 GB catalogue migration record,
+        previously only in `Schrödinger’s Breakfast/epk/lab session/`)
+- [x] **`MASTER_README.md` corrected** — roster 12 → **15** (DNZ, Kesh-Zion, Canthus, status
+      `ONBOARDED`), `96/96` → `120/120`, "all 12 masters" → "all 15", `~97 GB` → `~70 GB`,
+      `Docs/` described as copies (they were never hardlinks), `Find It Fast` QC paths corrected.
+      Mirrored to `Season One/Docs/`.
+- [x] **`.gitignore` header corrected** — 139 → **234** files over 100 MB, `~97 GB` → `~160 GiB`,
+      per-artist working folders `~70 GB`.
+- [x] **This checklist and `Season One/README.md` brought in line with measured state**
+      (12/12 → 15/15 where the catalogue is now 15, hardlink claims corrected to copies).
+- [ ] **`MASTER_README.md` / release docs still name only the original 12 in `epk_lab_promotion.md`**
+      — left alone deliberately: it is a dated label pitch, not a live index.
