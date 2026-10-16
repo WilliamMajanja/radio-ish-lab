@@ -11,7 +11,7 @@ verified from the project root on any machine.
 """
 import hashlib, os, sys, time, datetime
 
-R = "/Users/bernie/Movies/Radio-ish"
+R = os.environ.get("RADIOISH_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 EXT = (".mp3", ".wav", ".mp4", ".mov", ".aiff", ".aif", ".flac", ".m4a",
        ".png", ".jpg", ".jpeg",
        # DAW sessions: irreplaceable source for every render. Without these the
@@ -31,6 +31,8 @@ files = []
 for root, dirs, names in os.walk(R):
     dirs[:] = [d for d in dirs if d not in (".git", "Archive", "node_modules", "__pycache__")]
     for n in names:
+        if n.startswith("._"):          # AppleDouble sidecars are not media
+            continue
         if n.lower().endswith(EXT):
             p = os.path.join(root, n)
             files.append((os.path.relpath(p, R), p))

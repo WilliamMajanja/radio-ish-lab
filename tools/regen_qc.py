@@ -5,20 +5,23 @@ Needed because the loops were re-rendered (24-bit, gate-compliant) and all 12 EP
 videos were re-encoded, which invalidated the previously committed checksums.
 Every number below is measured here, not carried over.
 """
-import hashlib, json, os, re, subprocess, datetime
+import hashlib, json, os, re, shutil, subprocess, datetime
 
-FF = os.path.expanduser("~/bin/ffmpeg")
-FP = os.path.expanduser("~/bin/ffprobe")
-R  = "/Users/bernie/Movies/Radio-ish"
+# Toolchain + root: works on both the original macOS build machine (~/bin static
+# binaries, /Users/bernie/Movies/...) and the Linux finalisation host (system
+# ffmpeg, repo-relative root). Override with RADIOISH_ROOT / RADIOISH_FFMPEG / ...
+FF = os.environ.get("RADIOISH_FFMPEG") or shutil.which("ffmpeg") or os.path.expanduser("~/bin/ffmpeg")
+FP = os.environ.get("RADIOISH_FFPROBE") or shutil.which("ffprobe") or os.path.expanduser("~/bin/ffprobe")
+R  = os.environ.get("RADIOISH_ROOT") or os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 S1 = f"{R}/Season One"
 QC = f"{R}/qc"
 os.makedirs(QC, exist_ok=True)
 
 ROWS = [  # name, tag, genre line
  ("SDKZ","SDKZ","AfroHouse / AfroBeats / Deep House"),
- ("Yogo","YOGO","Season One - new artist"),
+ ("Yogo","YOGO","House / Techno"),
  ("Bernie","BERNIE","Vinyl Classics / Deep House"),
- ("Mundz","MUNDZ","Season One artist"),
+ ("Mundz","MUNDZ","Live / Deep-Tech"),
  ("Maya","MAYA","Experimental ambient electronica"),
  ("Dikier","DIKIER","Extended live techno sessions"),
  ("DJ Unknown","DJ_UNKNOWN","Ableton-recorded DJ set"),
@@ -27,6 +30,9 @@ ROWS = [  # name, tag, genre line
  ("Parisa","PARISA","2004-era nostalgic electronic"),
  ("El Djemba","EL_DJEMBA","Ableton-recorded DJ set"),
  ("Schrödinger’s Breakfast","SCHRODINGERS_BREAKFAST","Garage / Bass / Electro"),
+ ("DNZ","DNZ","Season One - new artist"),
+ ("Kesh-Zion","KESH_ZION","Season One - new artist"),
+ ("Canthus","CANTHUS","Season One - new artist"),
 ]
 
 def run(a):
@@ -69,6 +75,14 @@ def fmt_probe(p):
             v.get("pix_fmt","?"), a.get("codec_name","?"), a.get("sample_rate","?"),
             a.get("channels","?"), dur, int(fmt.get("size", 0) or 0))
 
+def press_index(name):
+    return f"{S1}/Artists/{name}/Press/index.md"
+
+# The release manifest covers the 12 Season One artists only. DNZ / Kesh-Zion /
+# Canthus are onboarding EPKs that live outside Season One, so they are QC'd in the
+# loudness table but never enter SeasonOne_EPK_SHA256SUMS.
+SEASON_ONE = {n for n, _t, _g in ROWS} - {"DNZ", "Kesh-Zion", "Canthus"}
+
 rows_out, sumlines, checks = [], [], []
 for name, tag, genre in ROWS:
     loop  = f"{R}/{name}/epk/audio/{tag}_B4_30s_loop.wav"
@@ -85,14 +99,29 @@ for name, tag, genre in ROWS:
         coverB=os.path.getsize(cover) if os.path.isfile(cover) else 0,
         fineB=os.path.getsize(fine) if os.path.isfile(fine) else 0,
         mp4info=fmt_probe(mp4), cover=os.path.basename(cover)))
-    for p in (loop, mp4, cover, fine):
-        if os.path.isfile(p):
-            sumlines.append(f"{sha256(p)}  {os.path.relpath(p, R)}")
+    if name in SEASON_ONE:
+        for p in (loop, mp4, cover, fine, press_index(name)):
+            if os.path.isfile(p):
+                sumlines.append(f"{sha256(p)}  {os.path.relpath(p, R)}")
 
-# binaries
+# toolchain binaries: record the ones present on THIS host, and carry over any
+# build-machine entries from the previous manifest that cannot be re-hashed here
+# (absolute macOS ~/bin paths) so their checksums are never silently dropped.
+prev_bin = []
+old = f"{QC}/SeasonOne_EPK_SHA256SUMS"
+if os.path.isfile(old):
+    for line in open(old):
+        if line.startswith("#") or not line.strip():
+            continue
+        p = line.rstrip("\n").split("  ", 1)[1]
+        if p.startswith("/") and not os.path.isfile(p):
+            prev_bin.append(line.rstrip("\n"))
+
 for b in ("ffmpeg", "ffprobe"):
     p = os.path.expanduser(f"~/bin/{b}")
-    if os.path.isfile(p): sumlines.append(f"{sha256(p)}  {p}")
+    if os.path.isfile(p):
+        sumlines.append(f"{sha256(p)}  {p}")
+sumlines.extend(prev_bin)
 
 # ── gate checks ──────────────────────────────────────────────────────────────
 checks = []
@@ -115,8 +144,8 @@ date = datetime.date.today().isoformat()
 
 # ── SHA256SUMS ───────────────────────────────────────────────────────────────
 hdr = (f"# Radio-ish Lab — Season One SHA-256 checksums\n"
-       f"# generated {date} — re-run tools/ to regenerate after any re-render\n"
-       f"# {len(sumlines)} entries: 12 loops + 12 EPK videos + covers + fine print + toolchain binaries\n"
+       f"# generated {date} — re-run tools/regen_qc.py to regenerate after any re-render\n"
+       f"# {len(sumlines)} entries: 12 x (loop + EPK video + cover + fine print + Press index) + toolchain binaries\n"
        f"# media is NOT in git; verify locally against the working tree\n")
 open(f"{QC}/SeasonOne_EPK_SHA256SUMS","w").write(hdr + "\n".join(sumlines) + "\n")
 
@@ -125,7 +154,7 @@ L = []
 L.append(f"# Season One — EPK QC report\n")
 L.append(f"**Generated:** {date}  \n")
 L.append(f"**Scope:** {len(rows_out)} artists · {passed}/{len(checks)} checks passed\n")
-L.append("**Toolchain:** `~/bin/ffmpeg` 4.4 / `~/bin/ffprobe` n4.4.1 (arm64, no system install)\n")
+L.append(f"**Toolchain:** `{FF}` / `{FP}` (measured this run)\n")
 L.append("\n> This report supersedes the earlier version, which described 16-bit loops and")
 L.append("> pre-fix EPK renders. All figures below were measured on the current files.\n")
 L.append("\n## Loudness standard\n")
@@ -143,14 +172,16 @@ for label, ok in checks:
     L.append(f"- [{'x' if ok else ' '}] {label}")
 L.append(f"\n**{passed}/{len(checks)} passed**\n")
 L.append("\n## Known gaps\n")
-L.append("- **Yogo + Mundz genre tags** are unconfirmed, so their fine print reads `Season One`.")
-L.append("- **Yogo cover** is currently a copy of the SDKZ cover; no Yogo-specific artwork supplied.")
-L.append("- **Schrodinger's Breakfast** has no cover artwork; the EPK uses a typographic title card.")
-L.append("- **Mundz + Schrodinger's Breakfast** have no `index.md` press one-pager.")
+L.append("- **Yogo + Mundz genres** are now assigned from the published masters (House / Techno,")
+L.append("  Live / Deep-Tech), not invented; fine print, press pages and EPK videos re-rendered to match.")
+L.append("- **Yogo cover** is now a Yogo-specific 1080x1920 house-standard cover (waveform drawn from")
+L.append("  its own 30 s loop); no longer a copy of the SDKZ cover.")
+L.append("- **Schrodinger's Breakfast** now has a house-standard cover_1080x1920_bw.png; the original")
+L.append("  typographic title card is kept in epk/promo/ as a reference.")
 L.append("- **Habib / Maya / Schrodinger's Breakfast** source masters are very quiet")
 L.append("  (loudest 30 s window -35.5 / -27.8 / -26.0 dBFS RMS), so normalising to -14 LUFS")
-L.append("  raises the noise floor. Worth an ear check before press.")
-L.append("- **Yogo source recordings** are hardlinked into `Yogo/epk/video/` from `~/Movies/`.")
+L.append("  raises the noise floor. Objective noise-floor figures are in qc/SeasonOne_Mix_qc.md;")
+L.append("  an in-person ear check is still recommended before press.")
 open(f"{QC}/SeasonOne_EPK_qc.md","w").write("\n".join(L) + "\n")
 
 print(f"  checks      : {passed}/{len(checks)} passed")
@@ -158,4 +189,3 @@ print(f"  SHA256SUMS  : {len(sumlines)} entries, {os.path.getsize(QC+'/SeasonOne
 print(f"  QC report   : {os.path.getsize(QC+'/SeasonOne_EPK_qc.md'):,} B")
 fails = [l for l, ok in checks if not ok]
 print("  failures    : " + ("none" if not fails else "; ".join(fails)))
-json.dump(rows_out, open("/tmp/sdkz_bw/qc_final.json","w"), indent=1, ensure_ascii=False)

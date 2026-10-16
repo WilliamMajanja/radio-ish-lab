@@ -9,6 +9,11 @@ Generated from real on-disk state. Every box below is either **done (verified)**
 - [x] No system install — both binaries live in `~/bin`, nothing written to `/usr/local` or `/opt`
 - [x] Checksums recorded — SHA-256 of both binaries in `qc/SeasonOne_EPK_SHA256SUMS`
 - [x] `ffmpeg` has the filters the EPK needs: `drawtext` (fine-print burn-in), `overlay`, `scale`
+- [x] **Finalisation host note.** The original build machine was macOS (static `~/bin` binaries, whose
+      SHA-256s are preserved in `qc/SeasonOne_EPK_SHA256SUMS`). The Yogo / Mundz / Schrödinger's
+      Breakfast EPK videos were re-rendered here on the Linux host with system `ffmpeg` 7.1.5
+      (`tools/render_epks_alpha.sh`), meeting the same h264/aac spec. `tools/regen_qc.py` runs on
+      either host.
 
 ## 2 · Audio — seamless 30 s EPK loop per artist
 - [x] 12/12 loops built from **real** audio on disk (multitrack master, or mastered EPK mix where no master exists)
@@ -37,10 +42,13 @@ Generated from real on-disk state. Every box below is either **done (verified)**
       quiet masters, so normalising to -14 LUFS lifts their noise floor
 
 ## 4 · Images — cover standard
-- [x] 11/12 artists: `cover_1080x1920_bw.png`, 1080×1920, **black background + white graphics**
-- [x] 1/12 (Schrödinger's Breakfast): no artwork on file → typographic title card, same 1080×1920 black-bg/white-type standard
-- [ ] **Schrödinger's Breakfast real artwork** — drop into `epk/promo/` and re-render to replace the card
-- [ ] **Yogo-specific cover** — currently a copy of the SDKZ cover
+- [x] 12/12 artists: `cover_1080x1920_bw.png`, 1080×1920, **black background + white graphics**
+- [x] **Yogo-specific cover** — now a Yogo 1080×1920 house-standard cover (mirrored waveform drawn
+      from Yogo's own 30 s loop). No longer a copy of the SDKZ cover; the SDKZ duplicate is archived
+      at `Yogo/epk/_archive/pre_cover/`.
+- [x] **Schrödinger's Breakfast artwork** — `cover_1080x1920_bw.png` now generated to the same
+      house standard; EPK video re-rendered onto it. Original typographic title card kept in
+      `epk/promo/` as a reference.
 
 ## 5 · Video — EPK mp4 per artist
 - [x] 12/12 rendered — `h264` 1080×1920 `yuv420p` + `aac` 48 kHz stereo, 30.000 s
@@ -55,7 +63,9 @@ Generated from real on-disk state. Every box below is either **done (verified)**
 - [x] **Bernie tightened** — `Vinyl Classics / Deep House`, leading with Vinyl Classics so it no longer collides with SDKZ's Deep House
 - [x] **12/12 press one-pagers** — `epk/index.md` hardlinked into `Season One/Artists/<Artist>/Press/`.
       Mundz, Yogo and Schrödinger were missing these; created in this pass.
-- [ ] **Yogo + Mundz genres** — no confirmed roster row; fine print reads `Season One`. Supply tags → re-render fine print + mp4
+- [x] **Yogo + Mundz genres** — assigned from the published masters, not invented: Yogo
+      `House / Techno`, Mundz `Live / Deep-Tech`. Fine print, press pages, EPK videos and the
+      `MASTER_README.md` roster re-rendered to match.
 
 ## 7 · Release tree integrity
 - [x] **96/96** files in `Season One/` verified as hardlinks to their working originals
@@ -82,9 +92,54 @@ Generated from real on-disk state. Every box below is either **done (verified)**
 - [x] MASTER_README roster updated (§8)
 - [x] Per-artist press one-pagers (§6)
 - [x] Release tree integrity, no breaks or unhandled folders (§7)
-- [ ] Yogo + Mundz genre tags (§6) — blocks final fine print
-- [ ] Yogo cover art and Schrödinger's Breakfast artwork (§4)
-- [ ] Ear check on the three quiet-source masters (§3)
-- [ ] Social_Media 9:16 clips for the other 11 artists + all platform uploads
-      (Mixcloud / SoundCloud / Bandcamp / Instagram) — Yogo's clips are done
-- [ ] GitHub repo published — `gh` is installed but not yet authenticated
+- [x] Yogo + Mundz genre tags (§6) — assigned from the masters, fine print + mp4 re-rendered
+- [x] Yogo cover art and Schrödinger's Breakfast artwork (§4)
+- [ ] Ear check on the three quiet-source masters (§3) — objective noise-floor figures are
+      published; the in-person listen still needs a human
+- [x] Social_Media 9:16 + 16:9 clips for the remaining 10 artists — **done.** `tools/make_social_clips.sh`
+      (the generator `SOCIAL_PLAYBOOK.md` referenced but that was missing) rendered the full platform
+      set per artist (tiktok/shorts/snap 30 s + reels 45 s 9:16 · x/fb 60 s 16:9) from each artist's
+      own live footage + mastered `*_mix_epk.mp3`. 60/60 verified. Parisa's source `.mov` is corrupt
+      (`moov atom not found`), so her clips fall back to a still cover/banner + mix audio. A
+      `captions.md` pack is written for each of the 10.
+- [ ] **Platform uploads** (Mixcloud / SoundCloud / Bandcamp / Instagram / TikTok / etc.) — the clips
+      and caption packs are ready; posting needs platform credentials/accounts and cannot be done from
+      this machine.
+- [x] GitHub repo published — public remote verified; `gh` authenticated
+
+## 10 · 2026-10-15 — gain-explosion fix (update)
+
+Two masters "exploded" out of near-silence on playback. Root cause found and fixed; all
+dependent artifacts re-rendered. Every figure below was measured on the current files.
+
+- [x] **Habib — released mix was ~82% near-silence.** The shipped mix sat on a silent
+      389.9 s timeline with a few loud islands. Rebuilt full-length from the real contiguous
+      recording: **3237.0 s (54 min)**, 48 kHz **-14.00 / -3.11 dBTP**, 44.1 kHz **-14.00 / -3.08**.
+- [x] **Schrödinger's Breakfast — the 30 s EPK loop was cut from a bursty window.** Rebuilt the
+      210-min master from the archived raw capture with a dynamics-control stage added to the
+      house chain (tames the loop's burst swings): **12602.5 s (210 min)**,
+      48 kHz **-14.21 / -1.50 dBTP**, 44.1 kHz **-14.21 / -1.69**.
+- [x] **Loops rebuilt** from the fixed masters — Habib (offset 3150, **-14.00 / -6.68**),
+      Schrödinger's (offset 2460, **-14.00 / -6.64**); the burst swings are gone.
+- [x] **EPK videos re-rendered** — `HABIB_B4_EPK_30s.mp4`, `SCHRODINGERS_BREAKFAST_B4_EPK_30s.mp4`
+      (h264 1080×1920 + aac 48 kHz, 30.000 s).
+- [x] **Social-clip audio bug fixed.** Every non-Parisa clip had been muxed with the *camera-mic*
+      audio instead of the mastered mix (missing stream mapping). Added `-map 0:v:0 -map 1:a:0`
+      in `tools/make_social_clips.sh`; **all 60 clips re-rendered** at ~-14 LUFS.
+- [x] **Season One tree re-synced** — 36/36 mix hardlinks restored (incl. Habib/Schrödinger via
+      `tools/sync_release_mix.py`); the 48 EPK tree copies refreshed to match the working files.
+- [x] **Manifests regenerated** — `qc/SeasonOne_EPK_SHA256SUMS` (62 entries, **150/150** checks via
+      `tools/regen_qc.py`); `qc/SeasonOne_Media_SHA256SUMS` (**689 files, 160.0 GiB**, AppleDouble
+      sidecars now excluded).
+- [x] **New dirs** — `wavs/` (15 original per-artist WAVs, moved out of `*/epk/audio/`) and
+      `mixes/` (15 master `_mix_hq` copies), staged for Telegram sharing.
+- [x] **Tooling hardened** — `rebuild_loops_portable.py` seam rewired for ffmpeg 7.1 (the old
+      single-input `acrossfade` graph produced no frames); `fix_gain_explosions.py` writes
+      intermediates to disk (not `/tmp` tmpfs → OOM truncation) and validates render duration;
+      `sync_release_mix.py`, `mix_qc_report.py`, `media_manifest.py` ported off macOS paths.
+- [x] **`qc/SeasonOne_Mix_qc.md` refreshed** — now covers all **15** masters (Habib and
+      Schrödinger's Breakfast rebuilt, DNZ/Kesh-Zion/Canthus onboarded). Changed/added rows were
+      re-measured live with `ffmpeg ebur128=peak=true` (agrees with `loudnorm` to ±0.1 LU /
+      0.02 dB, but runs ~43× realtime vs ~10×, so a full `loudnorm` re-measure would take ~8 h).
+      **120/120 checks passed.**
+- [ ] Ear check on the quiet-source masters (unchanged from §3).

@@ -18,15 +18,18 @@ drops that one name, the working copy always remains.
 """
 import json, os, shutil, datetime
 
-R     = "/Users/bernie/Movies/Radio-ish"
+R     = os.environ.get("RADIOISH_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ARCH  = f"{R}/Archive/2026-09-26_superseded/stray_release_files"
 STEM = {"SDKZ":"sdkz","Yogo":"yogo","Bernie":"bernie","Mundz":"mundz","Maya":"maya",
         "Dikier":"dikier","DJ Unknown":"dj_unknown","Alexander Zwo":"alexander_zwo",
         "Habib":"habib","Parisa":"parisa","El Djemba":"el_djemba",
-        "Schrödinger’s Breakfast":"schrodingers_breakfast"}
+        "Schrödinger’s Breakfast":"schrodingers_breakfast",
+        "DNZ":"dnz","Kesh-Zion":"kesh_zion","Canthus":"canthus"}
 CANON = ("_mix.mp3", "_mix_hq.mp3", "_mix_epk.mp3")
 
-log = open("/tmp/sdkz_bw/mixsync.log", "a", buffering=1)
+TMP = os.environ.get("RADIOISH_TMP", os.path.expanduser("~/gainfix_tmp"))
+os.makedirs(TMP, exist_ok=True)
+log = open(f"{TMP}/mixsync.log", "a", buffering=1)
 def say(m): print("  " + m, flush=True); log.write(m + "\n")
 
 say(f"\n=== Season One mix sync — {datetime.date.today().isoformat()} ===")
@@ -79,9 +82,10 @@ for artist, stem in STEM.items():
             bad.append(f"{artist}/{stem}{s}: absent"); continue
         if os.stat(w).st_ino != os.stat(t).st_ino:
             bad.append(f"{artist}/{stem}{s}: not a hardlink")
-say("VERIFY: all 36 mix hardlinks intact" if not bad
+expect = len(STEM) * len(CANON)
+say(f"VERIFY: all {expect} mix hardlinks intact" if not bad
     else "VERIFY: " + "; ".join(bad))
 for p in problems: say("  PROBLEM " + p)
 json.dump({"linked": linked, "strays_archived": strays, "missing": missing,
            "problems": problems, "bad": bad},
-          open("/tmp/sdkz_bw/mixsync.json", "w"), indent=1, ensure_ascii=False)
+          open(f"{TMP}/mixsync.json", "w"), indent=1, ensure_ascii=False)

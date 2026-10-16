@@ -11,6 +11,10 @@ attempt used `astats=metadata` + `ametadata=print`, which prints PER FRAME
 (346k spurious "windows" on an 8041 s file) and selected an offset past EOF.
 
 Seam construction C is UNCHANGED: body = A[0.5:30.5] crossfaded at the end with A[0:0.5].
+
+Usage:  rebuild_loops3.py [artist ...]
+No arguments rebuilds every artist; naming artists limits the run to them, so a
+new onboarding never re-renders loops that already pass the gate.
 """
 import json, os, re, struct, subprocess, sys, math
 
@@ -34,6 +38,10 @@ SRC = [
  ("Maya",                    f"{R}/Maya/epk/mix/maya_mix_epk.mp3",                                            "MAYA"),
  ("Habib",                   f"{R}/Habib/epk/mix/habib_mix_epk.mp3",                                          "HABIB"),
  ("Schrödinger’s Breakfast",  f"{R}/Schrödinger’s Breakfast/epk/mix/4-Audio 0001 [2026-09-21 130546].wav",     "SCHRODINGERS_BREAKFAST"),
+ # onboarded 2026-10-05 — canon is the raw Ableton capture in epk/audio
+ ("DNZ",                      f"{R}/DNZ/epk/audio/dnz_session_140704.wav",                                     "DNZ"),
+ ("Kesh-Zion",                f"{R}/Kesh-Zion/epk/audio/kesh_session_145756.wav",                              "KESH_ZION"),
+ ("Canthus",                  f"{R}/Canthus/epk/audio/canthus_session_134936.wav",                             "CANTHUS"),
 ]
 
 def run(a):
@@ -107,6 +115,13 @@ def norm2(d, tmp, dst):
 def dur(p):
     try: return float(run([FP,"-v","error","-show_entries","format=duration","-of","csv=p=0",p]).strip())
     except ValueError: return 0.0
+
+only = set(sys.argv[1:])
+if only:
+    unknown = only - {n for n, _, _ in SRC}
+    if unknown:
+        print(f"  [err] unknown artist(s): {', '.join(sorted(unknown))}"); sys.exit(1)
+    SRC = [s for s in SRC if s[0] in only]
 
 print(f"  {'ARTIST':<24}{'WIN':>6}{'PICK_RMS':>10}{'OFFSET':>8}{'DUR':>11}{'LUFS':>8}{'TP':>8}{'BITS':>6}  STATUS")
 report=[]

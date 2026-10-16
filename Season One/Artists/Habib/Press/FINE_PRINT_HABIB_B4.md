@@ -1,6 +1,6 @@
-# HABIB — EPK Fine Print (B4 · Season One · Radio-ish Lab)
+# Habib — EPK Fine Print (B4 · Season One · Radio-ish Lab)
 
-- **Artist:** HABIB
+- **Artist:** Habib
 - **Style / genres:** Deep house & melodic techno
 - **Master source:** mastered mix (epk/mix)
 - **Seamless loop:** HABIB_B4_30s_loop.wav — 30.000000 s · 48 kHz · 24-bit stereo

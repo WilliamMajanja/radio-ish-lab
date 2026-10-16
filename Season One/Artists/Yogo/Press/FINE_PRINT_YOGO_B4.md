@@ -1,7 +1,7 @@
 # YOGO — EPK Fine Print (B4 · Season One · Radio-ish Lab)
 
 - **Artist:** YOGO
-- **Style / genres:** Season One - new artist
+- **Style / genres:** House / Techno
 - **Master source:** mastered mix (epk/mix)
 - **Seamless loop:** YOGO_B4_30s_loop.wav — 30.000000 s · 48 kHz · 24-bit stereo
   · seamless by construction (0.5 s equal-power crossfade; file ends on the sample it begins with)

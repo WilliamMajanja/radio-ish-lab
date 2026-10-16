@@ -16,13 +16,18 @@
 | Facebook | MP4 | 16:9 1920×1080 | ≤120 s | 30 | clip_fb.mp4 | AAC |
 | Bandcamp / SoundCloud / Mixcloud | MP3 320k / 244k | — | full mixes | — | `epk/mix/*_epk.mp3` | original |
 
-Conversion command for any source → platform MP4 (9:16):
+Clips are **generated in bulk** by `tools/make_social_clips.sh` (any host with `ffmpeg`/`ffprobe`).
+Per clip it crops/scales the artist's live performance `.mov` to the platform ratio and uses the
+artist's OWN mastered `*_mix_epk.mp3` as the audio — never the raw camera mic — so every clip
+passes the "never post raw" sound gate in §7. The single-clip primitive it uses is:
 ```bash
-/Users/bernie/Downloads/ffmpeg -y -ss 00:18:00 -t 30 -i "source.mov" \
+ffmpeg -y -ss "$START" -t "$DUR" -i "source.mov" -ss "$START" -t "$DUR" -i "mix_epk.mp3" \
   -vf "crop=ih*9/16:ih,scale=1080:1920:flags=lanczos,fps=30" \
-  -af "alimiter=limit=0.9:level=false" -c:v h264 -crf 20 -preset faster -c:a aac -b:a 192k \
-  "Social_Media/promo/{Artist}/clip_tiktok.mp4"
+  -c:v libx264 -preset ultrafast -crf 21 -pix_fmt yuv420p -r 30 \
+  -af "alimiter=limit=0.9:level=false" -c:a aac -b:a 192k -ar 48000 -ac 2 \
+  -movflags +faststart "Social_Media/promo/{Artist}/{artist}_{YYYY-MM-DD}_{platform}.mp4"
 ```
+(16:9 targets `x` / `fb` use `scale=1920:1080` instead of the crop.)
 
 ## 2. Content Pillars (80/20 split)
 1. **The Set** — audio-visual performance cuts from the live sessions (80%).

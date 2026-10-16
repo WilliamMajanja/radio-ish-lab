@@ -1,7 +1,7 @@
 # MUNDZ — EPK Fine Print (B4 · Season One · Radio-ish Lab)
 
 - **Artist:** MUNDZ
-- **Style / genres:** Season One artist
+- **Style / genres:** Live / Deep-Tech
 - **Master source:** mundz_session_152305.wav
 - **Seamless loop:** MUNDZ_B4_30s_loop.wav — 30.000000 s · 48 kHz · 24-bit stereo
   · seamless by construction (0.5 s equal-power crossfade; file ends on the sample it begins with)

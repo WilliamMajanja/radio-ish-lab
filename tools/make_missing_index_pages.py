@@ -13,6 +13,34 @@ left honest rather than invented.
 import os, datetime
 
 R = "/Users/bernie/Movies/Radio-ish"
+# Onboarded 2026-10-05 (DNZ, Kesh-Zion, Canthus). Canthus closed Season One.
+NEW = {
+ "DNZ": dict(stem="dnz", upper="DNZ", tag="DNZ", dur="2:50:35",
+   src="dnz_session_140704.wav",
+   tracks=["dennis.als - Ableton Live session",
+           "dnz_session_140704.wav - original Ableton capture (44.1 kHz/24-bit stereo)"],
+   video=["2026-10-01 14-07-25.mov - full performance video"],
+   style=("DNZ is a Radio-ish Lab Season One artist. Style and genre descriptors are still to be "
+          "confirmed by the artist - the release does not invent them.")),
+ "Kesh-Zion": dict(stem="kesh_zion", upper="KESH-ZION", tag="KESH_ZION", dur="2:23:18",
+   src="kesh_session_145756.wav",
+   tracks=["kesh 1.als - Ableton Live session",
+           "Kesh2.als - Ableton Live session (short follow-up capture)",
+           "kesh_session_145756.wav - original Ableton capture (48 kHz/24-bit stereo)"],
+   video=["2026-10-03 14-58-42.mov - full performance video",
+          "2026-10-03 14-56-55.mov - performance video, opening",
+          "2026-10-03 17-25-41.mov - performance video, later set"],
+   style=("Kesh-Zion is a Radio-ish Lab Season One artist. Style and genre descriptors are still to "
+          "be confirmed by the artist - the release does not invent them.")),
+ "Canthus": dict(stem="canthus", upper="CANTHUS", tag="CANTHUS", dur="2:57:45",
+   src="canthus_session_134936.wav",
+   tracks=["canthus_session_134936.wav - original Ableton capture (48 kHz/24-bit stereo)"],
+   video=["2026-10-05 14-01-21.mov - full performance video"],
+   style=("Canthus is a Radio-ish Lab Season One artist, and the final artist of the season. Style "
+          "and genre descriptors are still to be confirmed by the artist - the release does not "
+          "invent them.")),
+}
+
 DATA = {
  "Mundz": dict(
    stem="mundz", upper="MUNDZ", dur="2:10:59",
@@ -43,16 +71,17 @@ log = open("/tmp/sdkz_bw/index_pages.log", "a", buffering=1)
 def say(m): print("  " + m, flush=True); log.write(m + "\n")
 say(f"\n=== missing press index pages — {datetime.date.today().isoformat()} ===")
 
-for artist, d in DATA.items():
+for artist, d in list(DATA.items()) + list(NEW.items()):
     s = d["stem"]
+    tag = d.get("tag", s.upper())
     L = [f"# {d['upper']} - EPK", "", "## DJ & Performing Artist", "", "### Audio",
          f"- {s}_mix.mp3 - Mixed DJ set, house-standardised master "
          f"(-14 LUFS, 48 kHz/320 kbps, {d['dur']})",
          f"- {s}_mix_hq.mp3 - HQ mastered mix (48 kHz/320 kbps, bit-identical to the master)",
          f"- {s}_mix_epk.mp3 - EPK delivery master (44.1 kHz/320 kbps)",
-         f"- {s.upper()}_B4_30s_loop.wav - Seamless 30 s loop (48 kHz/24-bit stereo)"]
+         f"- {tag}_B4_30s_loop.wav - Seamless 30 s loop (48 kHz/24-bit stereo)"]
     L += [f"- {t}" for t in d["tracks"]]
-    L += ["", "### Video", f"- {s.upper()}_B4_EPK_30s.mp4 - EPK promo video, 30 s, "
+    L += ["", "### Video", f"- {tag}_B4_EPK_30s.mp4 - EPK promo video, 30 s, "
               "H.264 + AAC, burned-in fine print"]
     L += [f"- {v}" for v in d["video"]]
     L += ["", "### Style", d["style"], "",
@@ -69,4 +98,4 @@ for artist, d in DATA.items():
     say(f"{artist:<26} wrote {len(body):>5} B -> epk/index.md, hardlinked to Press/index.md "
         f"({'ok' if ok else 'LINK FAILED'})")
 
-say("all 12 artists now have a press index page")
+say(f"all {len(DATA)+len(NEW)} artists now have a press index page")

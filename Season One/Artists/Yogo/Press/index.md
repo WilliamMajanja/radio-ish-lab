@@ -14,7 +14,9 @@
 - YOGO_B4_EPK_30s.mp4 - EPK promo video, 30 s, H.264 + AAC, burned-in fine print
 
 ### Style
-Yogo is a new Radio-ish Lab Season One artist. Style and genre descriptors are still to be confirmed by the artist - the release does not invent them.
+Yogo is a Radio-ish Lab Season One artist. **House / Techno** - a four-on-the-floor,
+bass-forward DJ set (2:46). Genre assigned by the release team from the published masters,
+not invented.
 
 ---
 *Radio-ish Lab · Season One · YOGO*

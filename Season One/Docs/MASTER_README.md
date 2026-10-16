@@ -18,8 +18,8 @@
 | 8 | El Djemba | Ableton-recorded DJ set | `el_djemba_mix(_hq/_epk).mp3` | LIVE |
 | 9 | Alexander Zwo | Ableton-recorded DJ set | `alexander_zwo_mix(_hq/_epk).mp3` | LIVE |
 | 10 | DJ Unknown | Ableton-recorded DJ set | `dj_unknown_mix(_hq/_epk).mp3` | LIVE |
-| 11 | Mundz | Genre tag pending | `mundz_mix(_hq/_epk).mp3` | LIVE |
-| 12 | Yogo | Season One · new artist · genre tag pending | `yogo_mix(_hq/_epk).mp3` | LIVE |
+| 11 | Mundz | Live / Deep-Tech · live set | `mundz_mix(_hq/_epk).mp3` | LIVE |
+| 12 | Yogo | House / Techno | `yogo_mix(_hq/_epk).mp3` | LIVE |
 
 > **Mix house standard (2026-09-28):** all 12 full-length masters have been standardised to
 > one gain and one EQ, so the catalogue is genuinely consistent rather than nominally so.

@@ -29,8 +29,12 @@ headroom to spare rather than by iteration.
 
 mix and mix_hq are bit-identical by the house matrix, so they share one encode.
 Resumable: a master already measuring on target is left untouched.
+
+Usage:  standardise_masters.py [artist ...]
+With no arguments every artist in JOBS is attempted. Naming artists limits the
+run to them, so onboarding a new artist never re-renders shipped masters.
 """
-import json, math, os, re, shutil, subprocess, time, datetime
+import json, math, os, re, shutil, subprocess, sys, time, datetime
 
 FF = os.path.expanduser("~/bin/ffmpeg")
 R  = "/Users/bernie/Movies/Radio-ish"
@@ -41,7 +45,8 @@ TARGET_LUFS, TP_CEIL, OVERSHOOT = -14.0, -0.9, 1.3   # measured MP3 overshoot, d
 STEM = {"SDKZ":"sdkz","Yogo":"yogo","Bernie":"bernie","Mundz":"mundz","Maya":"maya",
         "Dikier":"dikier","DJ Unknown":"dj_unknown","Alexander Zwo":"alexander_zwo",
         "Habib":"habib","Parisa":"parisa","El Djemba":"el_djemba",
-        "Schrödinger’s Breakfast":"schrodingers_breakfast"}
+        "Schrödinger’s Breakfast":"schrodingers_breakfast",
+        "DNZ":"dnz","Kesh-Zion":"kesh_zion","Canthus":"canthus"}
 JOBS = [
  ("SDKZ",                    "sdkz_mix.mp3",          "rx3"),
  ("Yogo",                    "yogo_mix.mp3",          "rx3"),
@@ -55,6 +60,10 @@ JOBS = [
  ("Parisa",                  "parisa_mix.mp3",        "rx3"),
  ("El Djemba",               "el_djemba_mix.mp3",     "rx3"),
  ("Schrödinger’s Breakfast",  "4-Audio 0001 [2026-09-21 130546].wav", "rx3"),
+  # onboarded 2026-10-05 — raw Ableton recordings, no prior master exists
+  ("DNZ",                      "dnz_session_140704.wav", "rx3"),
+  ("Kesh-Zion",                "kesh_session_145756.wav", "rx3"),
+  ("Canthus",                  "canthus_session_134936.wav", "rx3"),
 ]
 EQ = {
  "rx3":  "highpass=f=28,equalizer=f=220:t=q:w=0.8:g=-1.5,"
@@ -92,7 +101,15 @@ def on_target(path):
 log = open("/tmp/sdkz_bw/standardise3.log", "a", buffering=1)
 def say(m): print("  " + m, flush=True); log.write(m + "\n")
 
+want = set(sys.argv[1:])
+if want:
+    unknown = want - {a for a, _, _ in JOBS}
+    if unknown:
+        say(f"[err] unknown artist(s): {', '.join(sorted(unknown))}"); sys.exit(1)
+    JOBS = [j for j in JOBS if j[0] in want]
+
 say(f"\n=== house standardisation v3 — {datetime.date.today().isoformat()} ===")
+say(f"scope: {len(JOBS)} artist(s)" + (f" ({', '.join(a for a,_,_ in JOBS)})" if want else ""))
 results = []
 for artist, srcname, deck in JOBS:
     d = f"{R}/{artist}/epk/mix"
@@ -107,8 +124,11 @@ for artist, srcname, deck in JOBS:
             say(f"{artist:<24} already on target — skipped")
             continue
 
+    # epk/audio is the working source of truth for artists whose canon is a raw
+    # Ableton capture rather than a previously mastered file (new onboardings).
     src = None
-    for cand in (f"{ad}/{srcname}", f"{ad}/{stem}_mix.mp3", f"{ad}/{stem}_mix.wav",
+    for cand in (f"{ad}/{srcname}", f"{R}/{artist}/epk/audio/{srcname}", f"{ad}/{stem}_mix.mp3",
+                 f"{ad}/{stem}_mix.wav",
                  f"{ad}/{stem}_mix_hq.mp3", f"{d}/{srcname}"):
         if os.path.isfile(cand) and os.path.getsize(cand) > 1024:
             src = cand; break

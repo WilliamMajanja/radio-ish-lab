@@ -34,7 +34,8 @@ EXT = (".mp3", ".wav", ".mp4", ".mov", ".aiff", ".aif", ".flac", ".m4a",
        ".asd", ".als", ".flp", ".nksr", ".rpp", ".mxt")
 
 ARTISTS = ["SDKZ", "Yogo", "Bernie", "Mundz", "Maya", "Dikier", "DJ Unknown",
-           "Alexander Zwo", "Habib", "Parisa", "El Djemba", "Schrödinger’s Breakfast"]
+            "Alexander Zwo", "Habib", "Parisa", "El Djemba", "Schrödinger’s Breakfast",
+            "DNZ", "Kesh-Zion", "Canthus"]
 
 def bencode(o):
     if isinstance(o, int):  return b"i" + str(o).encode() + b"e"

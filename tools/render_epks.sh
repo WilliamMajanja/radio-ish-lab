@@ -22,12 +22,24 @@ ROWS=(
 "Parisa|PARISA|PARISA|2004-era nostalgic electronic"
 "El Djemba|EL_DJEMBA|EL DJEMBA|Ableton-recorded DJ set"
 "Schrödinger’s Breakfast|SCHRODINGERS_BREAKFAST|SCHRODINGER'S BREAKFAST|Garage / Bass / Electro"
+"DNZ|DNZ|DNZ|Season One - new artist"
+"Kesh-Zion|KESH_ZION|KESH-ZION|Season One - new artist"
+"Canthus|CANTHUS|CANTHUS|Season One - new artist"
 )
+
+# Optional artist filter: ./render_epks.sh DNZ Canthus renders only those,
+# so onboarding a new artist never re-encodes an already-shipped EPK video.
+FILTER=("$@")
 
 esc() { printf '%s' "$1" | sed "s/'/\\\\'/g; s/:/\\\\:/g"; }
 
 for ROW in "${ROWS[@]}"; do
   IFS='|' read -r NAME TAG L1 L2 <<< "$ROW"
+  if [ ${#FILTER[@]} -gt 0 ]; then
+    hit=0
+    for F in "${FILTER[@]}"; do [ "$F" = "$NAME" ] && hit=1; done
+    [ $hit -eq 1 ] || continue
+  fi
   E="$R/$NAME/epk"
   LOOP="$E/audio/${TAG}_B4_30s_loop.wav"
   COVER="$E/promo/cover_1080x1920_bw.png"

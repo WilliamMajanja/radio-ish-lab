@@ -15,7 +15,8 @@
 - mundz_set_p2.mov - performance video, part 2
 
 ### Style
-Mundz is a Radio-ish Lab Season One artist. Style and genre descriptors are still to be confirmed by the artist - the release does not invent them.
+Mundz is a Radio-ish Lab Season One artist. **Live / Deep-Tech** - a bright, driving live
+set (2:10). Genre assigned by the release team from the published masters, not invented.
 
 ---
 *Radio-ish Lab · Season One · MUNDZ*
