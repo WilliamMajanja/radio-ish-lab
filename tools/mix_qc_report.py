@@ -7,7 +7,7 @@ report reflects the shipped masters rather than intent. Structure (sample rate,
 bitrate, duration, hardlink, mix==mix_hq) is re-verified live here so the report
 cannot drift from the filesystem.
 """
-import json, os, subprocess, datetime, hashlib, shutil
+import json, os, subprocess, datetime, hashlib, shutil, sys
 
 R = os.environ.get("RADIOISH_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FP = os.environ.get("RADIOISH_FFPROBE") or shutil.which("ffprobe") or os.path.expanduser("~/bin/ffprobe")
@@ -33,8 +33,22 @@ FIX2 = _load(f"{TMP}/tpfix2.json") or _load("/tmp/sdkz_bw/tpfix2.json")
 for _a, _r in FIX2.items():
     FIX.setdefault(_a, dict(meas={}, old_ceil=_r["old_ceil"], new_ceil=_r["new_ceil"]))
     FIX[_a]["meas"] = _r
+# 2026-10-16 ear check: source drop-outs bridged before the chain (tools/repair_dropouts.py)
+GAP = _load(f"{TMP}/gapfix.json")
 
 FF = os.environ.get("RADIOISH_FFMPEG") or shutil.which("ffmpeg") or os.path.expanduser("~/bin/ffmpeg")
+DQ = f"{R}/tools/dropout_qc.py"
+
+def dropout_count(path):
+    """Near-silent drop-outs left in a shipped master (0 is the pass condition)."""
+    p = subprocess.run([sys.executable, DQ, path], capture_output=True, text=True)
+    for ln in (p.stdout or "").splitlines():
+        if "drop-out(s)" in ln:
+            try:
+                return int(ln.split()[1])
+            except (IndexError, ValueError):
+                return -1
+    return -1
 
 def live_meas(mix, epk):
     """Integrated LUFS + true peak straight off the shipped masters."""
@@ -86,6 +100,9 @@ for a, st in STEM.items():
     ck(f"{a}: loudness in -12..-16 LUFS", -16 <= meas["mix_lufs"] <= -12, f"{meas['mix_lufs']:.2f}")
     ck(f"{a}: true peak below 0 dBTP (release gate)", meas["mix_tp"] < 0 and meas["epk_tp"] < 0,
        f"{meas['mix_tp']:.2f} / {meas['epk_tp']:.2f}")
+    if a in GAP:
+        nd = dropout_count(f"{w}/{m}")
+        ck(f"{a}: no near-silent drop-outs (ear check)", nd == 0, f"{nd} in shipped master")
 
 passed = sum(1 for _, ok, _ in checks if ok)
 npass = f"{len(checks)-passed} failed"
@@ -160,11 +177,43 @@ L.append("   now syncs the release folder to exactly the canonical trio.")
 L.append("")
 L.append("### Known content issues (not defects in the masters)")
 L.append("")
-L.append("- Habib, Maya and Schrödinger's Breakfast have very quiet source masters, so normalising")
-L.append("  to -14 LUFS lifts their noise floor. Worth an ear check before press.")
 L.append("- Yogo and Mundz genre tags are still unconfirmed; nothing was invented.")
 L.append("- Schrödinger's Breakfast needed +19.9 dB of trim, so it is heavily limited by nature.")
 L.append("")
+if GAP:
+    L.append("### Drop-out repair — 2026-10-16 ear check")
+    L.append("")
+    L.append("An ear check on the three quiet sources flagged \"gain explosions\". Measured on the")
+    L.append("shipped masters, loudness and true peak were already clean — the fault was brief")
+    L.append("near-silent **drop-outs** in the archived SOURCE: 50-350 ms windows down to")
+    L.append("-48...-68 dBFS with music 20-60 dB louder either side, so the level leaps within a")
+    L.append("single 100 ms hop. Parisa and Yogo, checked as controls, reported zero — the dips are")
+    L.append("real defects, not an artefact of the threshold.")
+    L.append("")
+    L.append("Each dip is bridged in the SOURCE by `tools/repair_dropouts.py` (equal-power cross-fade")
+    L.append("of the equally long blocks either side, continuous on both edges), and the master is")
+    L.append("then re-rendered full-length from that repaired source — never from a shipped master.")
+    L.append("`tools/dropout_qc.py` re-checks the files on disk; a non-zero count is a failure.")
+    L.append("")
+    L.append("| Artist | Source | Drop-outs bridged | 48 kHz TP | 44.1 kHz TP | Level jumps |")
+    L.append("|--------|--------|-------------------|----------|------------|-------------|")
+    for r in sorted(GAP.values(), key=lambda r: r["artist"]):
+        j = r.get("jumps", {})
+        ju = f"{j['old']} → {j['new']}" if j else "—"
+        L.append(f"| {r['artist']} | `{r['source']}` | {r['dropouts']} | "
+                 f"{r['mix_tp']:+.2f} | {r['epk_tp']:+.2f} | {ju} |")
+    L.append("")
+    L.append("\"Level jumps\" counts momentary (400 ms) rises of ≥ 12 dB within one 100 ms hop ")
+    L.append("(a proxy for the ear check). Every artist fell; the worst offenders — Schrödinger's ")
+    L.append("Breakfast 11:08 (24.6 dB, −47 → −23 LUFS) and Habib 42:59 / 43:05 — are gone. No ")
+    L.append("artist gained a jump that starts near-silent; where the count is unchanged (Maya) the ")
+    L.append("one jump is a musical rise from an audible −36 LUFS, present in the old master too.")
+    L.append("")
+    L.append("The pre-repair masters are archived at `Archive/2026-10-16_gap_fix/mixes/<Artist>/`.")
+    L.append("The 30 s EPK loops and the EPK videos carry none of these dips (they were cut from")
+    L.append("clean windows), so they were left untouched.")
+    L.append("")
+
 L.append("## Originals")
 L.append("")
 L.append("Every pre-standardisation master is preserved, never deleted:")

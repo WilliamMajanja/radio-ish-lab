@@ -151,6 +151,9 @@ python3 tools/media_manifest.py
 
 # Re-measure every master live and rebuild the mix QC report.
 python3 tools/mix_qc_report.py      # ~8 h: it runs loudnorm over the full catalogue
+
+# Confirm no near-silent drop-out survives in a shipped master (exit 0 = clean).
+python3 tools/dropout_qc.py "Habib/epk/mix/habib_mix.mp3"
 ```
 
 | Evidence | Scope |
@@ -173,7 +176,9 @@ original macOS paths.
 |------|--------------|
 | `tools/standardise_masters.py` | Apply the house gain + EQ chain to every master |
 | `tools/fix_truepeak.py` / `tp_repair.py` | Lower the limiter ceiling by the true-peak overshoot actually measured, re-rendering from the original capture |
-| `tools/fix_gain_explosions.py` | Rebuild a master whose released mix exploded out of silence (full-length from the real recording, with dynamics control) |
+| `tools/fix_gain_explosions.py` | Rebuild a master whose released mix exploded out of silence (full-length from the real recording, with dynamics control). Also bridges source drop-outs first when `repair=True` |
+| `tools/repair_dropouts.py` | Bridge brief near-silent drop-outs in an archived source with an equal-power cross-fade, in place of the hole, before re-rendering |
+| `tools/dropout_qc.py` | Fail the build if a shipped master still contains a near-silent drop-out (`exit 1`) |
 | `tools/rebuild_loops3.py` / `rebuild_loops_portable.py` | Pick the strongest 30 s window, build a seam, master to −14 LUFS |
 | `tools/render_epks_alpha.sh` | Render the vertical EPK video — cover + seamless loop + burned-in fine print (Linux port of `render_epks.sh`) |
 | `tools/make_epk_cover.py` | House-standard 1080×1920 cover from the artist's own loop |

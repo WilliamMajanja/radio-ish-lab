@@ -46,8 +46,11 @@ Generated from real on-disk state. Every box below is either **done (verified)**
 - [x] All pre-standardisation masters preserved, never deleted — `Archive/2026-09-26_superseded/mixes/`
 - [x] `qc/SeasonOne_Mix_qc.md` — per-artist trim, loudness, true peak, limiter ceiling — **120/120 checks**
       (8 checks × 15 masters)
-- [ ] **Ear check on the three quiet sources** — Habib, Maya and Schrödinger's Breakfast have very
-      quiet masters, so normalising to -14 LUFS lifts their noise floor
+- [x] **Ear check on the three quiet sources** — done 2026-10-16. The masters measured clean on
+      loudness and true peak; the fault was brief near-silent **drop-outs in the archived source**
+      (50-350 ms down to -48...-68 dBFS with music 20-60 dB louder either side). Bridged with
+      `tools/repair_dropouts.py` and all three masters re-rendered full-length from the repaired
+      sources — 516 drop-outs total. `tools/dropout_qc.py` re-checks the shipped files; see §12.
 
 ## 4 · Images — cover standard
 - [x] 12/12 Season One artists: `cover_1080x1920_bw.png`, 1080×1920, **black background + white graphics**
@@ -111,8 +114,8 @@ Generated from real on-disk state. Every box below is either **done (verified)**
 - [x] Release tree integrity, no breaks or unhandled folders (§7)
 - [x] Yogo + Mundz genre tags (§6) — assigned from the masters, fine print + mp4 re-rendered
 - [x] Yogo cover art and Schrödinger's Breakfast artwork (§4)
-- [ ] Ear check on the three quiet-source masters (§3) — objective noise-floor figures are
-      published; the in-person listen still needs a human
+- [x] Ear check on the three quiet-source masters (§3) — carried out 2026-10-16; the objective
+      figures had hidden a drop-out defect. Fixed in §12.
 - [x] Social_Media 9:16 + 16:9 clips for the remaining 10 artists — **done.** `tools/make_social_clips.sh`
       (the generator `SOCIAL_PLAYBOOK.md` referenced but that was missing) rendered the full platform
       set per artist (tiktok/shorts/snap 30 s + reels 45 s 9:16 · x/fb 60 s 16:9) from each artist's
@@ -159,7 +162,7 @@ dependent artifacts re-rendered. Every figure below was measured on the current 
       re-measured live with `ffmpeg ebur128=peak=true` (agrees with `loudnorm` to ±0.1 LU /
       0.02 dB, but runs ~43× realtime vs ~10×, so a full `loudnorm` re-measure would take ~8 h).
       **120/120 checks passed.**
-- [ ] Ear check on the quiet-source masters (unchanged from §3).
+- [x] Ear check on the quiet-source masters (unchanged from §3) — completed 2026-10-16, see §12.
 
 ## 11 · 2026-10-16 — documentation pass (update)
 
@@ -188,3 +191,47 @@ Repo documentation audited against on-disk state; nothing media-side was touched
       (12/12 → 15/15 where the catalogue is now 15, hardlink claims corrected to copies).
 - [ ] **`MASTER_README.md` / release docs still name only the original 12 in `epk_lab_promotion.md`**
       — left alone deliberately: it is a dated label pitch, not a live index.
+
+## 12 · 2026-10-16 — quiet-source drop-out repair (ear check)
+
+The §3 ear check found "gain explosions" on the three quiet sources. Loudness and true peak on the
+shipped masters were already clean, so the fault was not in the chain — it was brief near-silent
+**drop-outs in the ARCHIVED SOURCE**: 50-350 ms windows down to -48…-68 dBFS, with music 20-60 dB
+louder either side, so level leapt within one 100 ms window. Parisa and Yogo, measured as controls,
+reported **zero**, confirming these are real defects and not a threshold artefact.
+
+- [x] **Drop-out detector** `tools/dropout_qc.py` — runs of 50 ms windows ≤ -48 dBFS, ≥ 50 ms long,
+      merged within 100 ms, qualified only when the 1 s median either side is ≥ -35 dBFS. Non-zero
+      count fails the build (`exit 1`).
+- [x] **Source repair** `tools/repair_dropouts.py` — equal-power cross-fade of the equally long
+      blocks immediately before and after each hole (reversed, so the fill is continuous on both
+      edges); iterated until no qualifying hole remains. Length is preserved and no second-
+      generation encode is involved.
+- [x] **Bridged drop-outs (source-side):** Habib **14** (`Habib/epk/audio/2026-08-31 15-26-03.mp3`),
+      Maya **2** (`Archive/2026-09-26_superseded/mixes/Maya/maya_mix_remaster.mp3`, identity
+      confirmed by exact-duration match with the shipped mix), Schrödinger's Breakfast **500**
+      (`Archive/2026-09-26_superseded/mixes/Schrödinger’s Breakfast/4-Audio 0001 [2026-09-21 130546].wav`)
+      — **516 in total**.
+- [x] **All three masters re-rendered full-length from the repaired sources**, never from a shipped
+      master. True peaks: Habib -3.13 / -3.08 dBTP, Maya -2.17 / -2.06, Schrödinger -1.50 / -1.69
+      (48 kHz / 44.1 kHz) — all inside the ≤ -0.9 gate.
+- [x] **Drop-out re-check on the shipped files:** Habib 6 → **0**, Maya 2 → **0**, Schrödinger
+      **0** (its master-level dips were already lifted above the -48 floor by the +19.5 dB trim, which
+      is why the ear check, not the master metric, was the trigger there).
+- [x] **Level-jump count (momentary rises ≥ 12 dB within one hop):** Habib 11 → **9** (the two
+      removed are exactly the 42:59 / 43:05 drop-out leaps), Maya 1 → **1** (the survivor is a
+      musical rise from an audible -36 LUFS, present in the old master), Schrödinger **42 → 31**
+      (worst, 11:08, was 24.6 dB from -47 LUFS); loudest-content metric `max_M` unchanged at -7.7, so
+      dynamics were not squashed. No artist gained a near-silent-origin jump.
+- [x] **Pre-repair masters archived** — `Archive/2026-10-16_gap_fix/mixes/<Artist>/`, never deleted.
+- [x] **Release tree re-pointed** — `Season One/Artists/<Artist>/Mix/*` are hardlinks to the new
+      `epk/mix` trio for all three artists (verified by inode).
+- [x] **Downstream assets unaffected** — the three 30 s EPK loops and the three EPK videos were cut
+      from clean windows and report 0 drop-outs, so they were left as-is.
+- [x] **`tools/mix_qc_report.py` extended** — a per-artist drop-out gate and a "Drop-out repair"
+      section (3 further checks: Habib, Maya, Schrödinger's Breakfast), plus the level-jump column.
+- [ ] **`qc/SeasonOne_Mix_qc.md` regeneration — OPEN.** The tool reads the measurement caches
+      `standardise3.json` / `tpfix.json` / `tpfix2.json` from the original build host for its trims
+      and repair ceilings; without them it re-measures loudness but writes a blank trim column, so
+      the committed report is left standing at **120/120**. The drop-out-clean result is proven
+      separately by `tools/dropout_qc.py` — Habib / Maya / Schrödinger all **0**.

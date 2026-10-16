@@ -29,7 +29,7 @@ build() {
   return 1
 }
 
-echo "== TODO 3 (final): seamless 30s loops, construction C, all artists =="
+echo "== seamless 30s loops (construction C), all artists =="
 build "SDKZ"                   "$R/SDKZ/SDKZ_B4_03.09.26.WAV"                                             1800 "SDKZ"
 build "Yogo"                   "$R/radio-ish 2 Project/Samples/Recorded/4-Audio 0003 [2026-09-24 154843].wav"  1800 "YOGO"
 build "Bernie"                 "$R/Bernie/epk/audio/2026-09-12 14-25-18.wav"                                 900 "BERNIE"
