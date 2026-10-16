@@ -50,6 +50,7 @@
 Radio-ish/
 ├── MASTER_README.md          <- this file
 ├── README.md                 <- project overview: roster, house standard, verification
+├── LICENSE                   <- proprietary — © 2026 William Majanja
 ├── EPK_Audio_Workflow.md     <- mastering/QA convention (single source of truth)
 ├── BRAND_GUIDELINES.md       <- brand voice, handles, watermarks, hashtags
 ├── epk_lab_promotion.md      <- label pitch / promotion one-pager

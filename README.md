@@ -90,6 +90,7 @@ Per-artist trim, measured loudness, true peak and limiter ceiling: `qc/SeasonOne
 ```
 Radio-ish/
 ├── README.md                  <- you are here
+├── LICENSE                    <- proprietary — © 2026 William Majanja
 ├── MASTER_README.md           <- master production index: roster, architecture, deliverable matrix
 ├── EPK_Audio_Workflow.md      <- mastering / QA convention (single source of truth)
 ├── BRAND_GUIDELINES.md        <- voice, handles, watermarks, hashtag system
@@ -249,5 +250,8 @@ release tree verified). What still needs a human or an outside resource:
 
 ## License
 
-No license has been specified for this repository yet — all rights are reserved by default.
-Talk to us before reusing anything here.
+**Proprietary — © 2026 William Majanja. All rights reserved.** See [`LICENSE`](LICENSE).
+
+No permission is granted to copy, reproduce, modify, distribute or reuse any part of this
+repository — code, tooling, documentation, press copy, artwork or metadata — without the
+prior written consent of the owner. "Radio-ish Lab" and its marks are trademarks of the owner.
