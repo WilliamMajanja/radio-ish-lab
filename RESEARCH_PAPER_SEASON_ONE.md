@@ -10,6 +10,8 @@
 
 | Role | Credit |
 |------|--------|
+| **Creators** | **William Majanja** and **DJ Bernie Cyber** |
+| **Funded by** | **B4 Hotel Management** |
 | **Partner** | **B4 — Before Hotel Management** (**Alexander Zwo**) |
 | **Executive Producer** | **Bernie** |
 | **Line Producer** | **Agent Mgumbe** (Agent Mgumbe Studio) |
@@ -83,6 +85,8 @@ credits of the house, reproduced verbatim from the release sheet and fine print 
 
 | Role | Name | Notes |
 |------|------|-------|
+| **Creators** | **William Majanja** and **DJ Bernie Cyber** | Creators of Radio-ish Lab — the two principals the house is built around. |
+| **Funded by** | **B4 Hotel Management** | Production is funded by B4 Hotel Management. |
 | **Partner** | **B4 — Before Hotel Management** | Imprint/publisher of the house; partner principal **Alexander Zwo**. Every Lab session is developed *for B4*. |
 | **Executive Producer** | **Bernie** | Producer and co-founder; full-length Ableton live sessions (Vinyl Classics / Deep House). Owns the label's sonic identity and the B4 Radio live capture. |
 | **Line Producer** | **Agent Mgumbe** | Agent Mgumbe Studio — the producing studio that turns a session into a Lab release. |
@@ -97,7 +101,8 @@ The fine print on every deliverable reads:
 *Season One* thus has a single, coherent chain of responsibility: **B4** commissions and
 publishes, **Bernie** produces, **Agent Mgumbe Studio** delivers, and
 **Schrödinger's Breakfast (1nf1D3L / SigInt and Systems)** builds and operates the pipeline
-that makes it reproducible.
+that makes it reproducible. The house itself is **created by William Majanja and DJ Bernie
+Cyber**, with production **funded by B4 Hotel Management**.
 
 ---
 
@@ -485,6 +490,9 @@ collapsed sessions, 516 intermittent drop-outs — and the house standard plus a
 failing QC gate is what neutralises them. The lesson for the next season is direct: **teach
 the hand, and measure the file.** Until then, the lab ships what it can prove.
 
+**Radio-ish Lab is created by William Majanja and DJ Bernie Cyber, with production funded by
+B4 Hotel Management.**
+
 **Produced by Agent Mgumbe Studio and Developed by Schrödinger's Breakfast for Before Hotel
 Management (B4).**
 
@@ -510,6 +518,8 @@ Management (B4).**
 ## Appendix B — Credits (canonical)
 
 ```
+CREATED BY WILLIAM MAJANJA AND DJ BERNIE CYBER
+FUNDED BY B4 HOTEL MANAGEMENT
 PRODUCED BY AGENT MGUMBE STUDIO
 DEVELOPED BY SCHRÖDINGER'S BREAKFAST
   (1nf1D3L [William Majanja] · SigInt and Systems)
@@ -529,6 +539,6 @@ RADIO-ISH LAB · SEASON ONE · 2026
 - `LAB_SESSION_1_PINET-ALPHA_MIGRATION.md` — the 184 GB catalogue migration record
 - `Season One/README.md` — release standard and canonical filenames
 - `qc/SeasonOne_EPK_qc.md`, `qc/SeasonOne_Mix_qc.md` — measured QC evidence
-- `qc/SeasonOne_Release_Checklist.md` — verified vs open items, full history (§1–§12)
+- `qc/SeasonOne_Release_Checklist.md` — verified vs open items, full history (§1–§13)
 - `qc/SeasonOne_EPK_SHA256SUMS`, `qc/SeasonOne_Media_SHA256SUMS` — checksums
 - `Social_Media/posters/Season One/B4_SEASON_ONE_RELEASE_SHEET.txt`, `Social_Media/fine_print.txt` — credits

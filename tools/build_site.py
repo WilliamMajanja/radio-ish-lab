@@ -125,6 +125,7 @@ def page(title, body, depth=0, description=None):
 </main>
 <footer class="site">
   <p><strong>{SITE_NAME}</strong> · {SEASON} · “{TAGLINE}”</p>
+  <p>Created by <strong>William Majanja</strong> and <strong>DJ Bernie Cyber</strong> · Funded by <strong>B4 Hotel Management</strong></p>
   <p class="muted">Produced by Agent Mgumbe Studio · Developed by Schrödinger’s Breakfast (1nf1D3L [William Majanja])
      for Before Hotel Management (B4) · Executive Producer Bernie</p>
   <p class="muted"><a href="{REPO_URL}">Source &amp; evidence on GitHub</a> · © 2026 William Majanja</p>
@@ -299,6 +300,13 @@ def build(out):
   </div>
   <p class="muted">Every master, loop, video and cover is measured, not asserted. Full figures and the
   build pipeline live in the <a href="evidence.html">evidence</a> and <a href="docs/index.html">docs</a>.</p>
+</section>
+<section id="credits">
+  <h2>Credits</h2>
+  <p>Radio-ish Lab is <strong>created by William Majanja and DJ Bernie Cyber</strong>. Production is
+  <strong>funded by B4 Hotel Management</strong>.</p>
+  <p class="muted">Produced by Agent Mgumbe Studio · Developed by Schrödinger’s Breakfast
+  (1nf1D3L [William Majanja]) for Before Hotel Management (B4) · Executive Producer Bernie.</p>
 </section>"""
     open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(page("Season One", body))
 

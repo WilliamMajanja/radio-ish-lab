@@ -4,6 +4,8 @@
 > deliverable can be found, verified, and shipped to press or socials in minutes.
 > Target quality bar: **Mixmag-grade production & delivery.**
 
+**Created by William Majanja and DJ Bernie Cyber. Funded by B4 Hotel Management.**
+
 ## Artist Roster (15)
 
 | # | Artist | Role / Style | Mix deliverables | Status |

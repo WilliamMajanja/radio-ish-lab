@@ -9,6 +9,8 @@ files are byte-verified copies** (they may be re-rendered independently of the w
 Working files — multitrack masters, stems, raw session audio and footage (~70 GB) — stay in
 `<Artist>/epk/{audio,processing,video}/` and are deliberately **not** duplicated here.
 
+**Created by William Majanja and DJ Bernie Cyber. Funded by B4 Hotel Management.**
+
 ## Layout
 
 ```

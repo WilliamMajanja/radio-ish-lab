@@ -41,3 +41,13 @@
 - DO lead clips with 0–2 seconds of movement before text appears.
 - DON'T upload `.mov` sources to socials — convert to H.264 MP4 first.
 - DON'T use unmastered stems as the audible "teaser" on socials — always use mastered mixes.
+
+## 7. Creators & Credits
+- **Created by:** **William Majanja** and **DJ Bernie Cyber** — the creators of Radio-ish Lab.
+- **Funded by:** **B4 Hotel Management**.
+- Canonical credit line (use verbatim where a single line is needed):
+  > Created by William Majanja and DJ Bernie Cyber · Funded by B4 Hotel Management
+- Production credits (unchanged): produced by **Agent Mgumbe Studio**; developed by
+  **Schrödinger's Breakfast** (1nf1D3L [William Majanja]) for **Before Hotel Management (B4)**;
+  executive producer **Bernie**.
+- Never drop the creator or funder credit from a release sheet, press one-pager or the site footer.

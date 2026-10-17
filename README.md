@@ -12,12 +12,17 @@ This repository holds the **release metadata** for that package: the documentati
 copy, QC evidence, SHA-256 manifests and the reproducible ffmpeg/Python pipeline that
 produced it. The audio and video masters themselves stay on local and backup storage.
 
+**Radio-ish Lab is created by William Majanja and DJ Bernie Cyber.** Production is funded by
+**B4 Hotel Management**.
+
 ---
 
 ## At a glance
 
 | | |
 |---|---|
+| **Created by** | **William Majanja** and **DJ Bernie Cyber** |
+| **Funded by** | **B4 Hotel Management** |
 | **Artists** | 15 — 12 original Season One acts plus DNZ, Kesh-Zion and Canthus |
 | **Mix masters** | 15 × 3 files — `mix` / `mix_hq` (48 kHz 320k, bit-identical) + `mix_epk` (44.1 kHz 320k) |
 | **EPK stack per artist** | seamless loop · EPK video · cover · fine print · press one-pager |
@@ -293,6 +298,9 @@ release tree verified). What still needs a human or an outside resource:
 ## License
 
 **Proprietary — © 2026 William Majanja. All rights reserved.** See [`LICENSE`](LICENSE).
+
+Radio-ish Lab is created by **William Majanja** and **DJ Bernie Cyber**; production is funded by
+**B4 Hotel Management**.
 
 No permission is granted to copy, reproduce, modify, distribute or reuse any part of this
 repository — code, tooling, documentation, press copy, artwork or metadata — without the
