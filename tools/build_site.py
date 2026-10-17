@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover - the workflow installs requirements
     sys.exit("error: the 'markdown' package is required (pip install -r tools/requirements.txt)")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPO_URL = os.environ.get("RADIOISH_REPO_URL", "https://github.com/djbernie-cyber/radio-ish-lab")
+REPO_URL = os.environ.get("RADIOISH_REPO_URL", "https://github.com/WilliamMajanja/radio-ish-lab")
 BRANCH = os.environ.get("RADIOISH_BRANCH", "main")
 SITE_NAME = "Radio-ish Lab"
 SEASON = "Season One"

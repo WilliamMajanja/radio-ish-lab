@@ -16,10 +16,11 @@ COPY . .
 RUN python tools/build_site.py --out /site
 
 FROM nginx:1.27-alpine
+ARG SOURCE_URL="https://github.com/WilliamMajanja/radio-ish-lab"
 LABEL org.opencontainers.image.title="Radio-ish Lab — Season One" \
       org.opencontainers.image.description="Static EPK microsite for Radio-ish Lab, Season One." \
       org.opencontainers.image.licenses="See LICENSE" \
-      org.opencontainers.image.source="https://github.com/djbernie-cyber/radio-ish-lab"
+      org.opencontainers.image.source="${SOURCE_URL}"
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /site /usr/share/nginx/html
 EXPOSE 80

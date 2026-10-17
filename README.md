@@ -217,7 +217,7 @@ The metadata in this repo also builds a public **EPK microsite** and ships as a 
 | `.github/workflows/release.yml` | tag `v*` | attaches the site bundle, a press-kit zip and `SHA256SUMS` to a GitHub Release |
 | `.github/workflows/package.yml` | tag `v*` | publishes the site image to **GHCR** |
 
-The site is `https://djbernie-cyber.github.io/radio-ish-lab/`. The GHCR image is a multi-stage
+The site is `https://williammajanja.github.io/radio-ish-lab/`. The GHCR image is a multi-stage
 build (`deploy/Dockerfile`) that builds the site and serves it with nginx:
 
 ```bash

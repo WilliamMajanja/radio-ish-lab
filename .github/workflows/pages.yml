@@ -19,6 +19,8 @@ jobs:
   build:
     name: Build site
     runs-on: ubuntu-latest
+    env:
+      RADIOISH_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

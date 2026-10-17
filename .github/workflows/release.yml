@@ -16,6 +16,8 @@ jobs:
   release:
     name: Publish release
     runs-on: ubuntu-latest
+    env:
+      RADIOISH_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
     steps:
       - uses: actions/checkout@v4
         with:
