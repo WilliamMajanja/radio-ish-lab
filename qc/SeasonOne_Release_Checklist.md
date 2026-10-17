@@ -261,7 +261,10 @@ The metadata repo now builds a public EPK microsite and ships through CI.
       `actionlint`; release packaging dry-run locally.
 - [x] **Local verification** — site builds (15 artists, 16 docs), all 8 doc mirrors byte-identical,
       `ci_check.py` green, Docker image builds and serves, markdownlint / shellcheck clean.
-- [ ] **Enable Pages** — repo **Settings → Pages → Source: GitHub Actions** (`pages.yml` requests
-      `enablement: true`, so the first push to `main` should self-enable; confirm the deploy job).
+- [x] **Public repo + Pages live** — the project is hosted at **`WilliamMajanja/radio-ish-lab`**
+      (public). Pages is enabled (`build_type: workflow`) and the deploy job is green at
+      **https://williammajanja.github.io/radio-ish-lab/** — verified HTTP 200 for the index, an
+      artist page and a cover. The site's GitHub links resolve to the hosting repo (the workflows
+      pass `RADIOISH_REPO_URL` from `github.repository`).
 - [ ] **Cut the first tag** — push a `v…` tag to exercise `release.yml` and `package.yml` end-to-end.
 

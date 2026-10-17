@@ -163,7 +163,7 @@ python3 tools/dropout_qc.py "Habib/epk/mix/habib_mix.mp3"
 | `qc/SeasonOne_Mix_qc.md` | 15 masters · **123/123 checks** (sample rate, bitrate, bit-identical pair, length, hardlink, loudness gate, true-peak gate, drop-out gate) |
 | `qc/SeasonOne_EPK_SHA256SUMS` | 62 entries — 60 deliverable hashes (12 artists × 5) + 2 toolchain provenance lines |
 | `qc/SeasonOne_Media_SHA256SUMS` | 689 files · 160 GiB |
-| `qc/SeasonOne_Release_Checklist.md` | 91 verified items · 4 open |
+| `qc/SeasonOne_Release_Checklist.md` | 92 verified items · 3 open |
 
 ---
 
